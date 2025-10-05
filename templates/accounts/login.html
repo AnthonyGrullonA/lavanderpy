@@ -1,0 +1,110 @@
+{% extends "base_auth.html" %}
+{% load static %}
+{% load widget_tweaks %}
+{% block header %}{% endblock %}
+
+{% block title %}Ingreso — Lavandería{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-center align-items-center min-vh-100">
+  <div class="mw-480 w-100">
+    <div class="text-center mb-4">
+      <h3 class="fs-28 mb-2">Bienvenido</h3>
+      <p class="fw-medium fs-16">Ingresa con tus credenciales</p>
+    </div>
+
+    {# modal para mostrar alertas #}
+    <div class="modal fade" id="alertModal" tabindex="-1" aria-labelledby="alertModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="alertModalLabel">Aviso</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+          </div>
+          <div class="modal-body" id="alertModalBody">
+            <!-- Aquí va el mensaje dinámico -->
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Aceptar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    {# Pasamos los mensajes de Django como JSON a JS #}
+    {% if messages %}
+      <script>
+        const alerts = [
+          {% for m in messages %}
+            {
+              "level": "{{ m.tags|default:'info' }}",
+              "message": "{{ m|escapejs }}"
+            }{% if not forloop.last %},{% endif %}
+          {% endfor %}
+        ];
+      </script>
+    {% endif %}
+
+    {% if form.non_field_errors %}
+      <script>
+        const formErrors = [
+          {% for e in form.non_field_errors %}
+            {"level": "error", "message": "{{ e|escapejs }}"}{% if not forloop.last %},{% endif %}
+          {% endfor %}
+        ];
+      </script>
+    {% endif %}
+
+    <form method="post" action="">
+      {% csrf_token %}
+      {% if request.GET.next %}
+        <input type="hidden" name="next" value="{{ request.GET.next }}">
+      {% endif %}
+
+      <div class="form-group mb-4">
+        <label class="label text-secondary">Usuario o Email</label>
+        {{ form.username|add_class:"form-control h-55" }}
+      </div>
+
+      <div class="form-group mb-4">
+        <label class="label text-secondary">Contraseña</label>
+        {{ form.password|add_class:"form-control h-55" }}
+      </div>
+
+      <div class="form-group mb-4 text-end">
+        <a href="#" class="text-decoration-none text-primary fw-semibold">¿Olvidaste tu contraseña?</a>
+      </div>
+
+      <div class="form-group mb-4">
+        <button type="submit" class="btn btn-primary fw-medium py-2 px-3 w-100">
+          <div class="d-flex align-items-center justify-content-center py-1">
+            <span>Entrar</span>
+          </div>
+        </button>
+      </div>
+
+      <div class="form-group text-center">
+        <p>¿No tienes cuenta? <span class="text-muted">Contacta al administrador.</span></p>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  let allAlerts = [];
+  if (typeof alerts !== "undefined") allAlerts = allAlerts.concat(alerts);
+  if (typeof formErrors !== "undefined") allAlerts = allAlerts.concat(formErrors);
+
+  if (allAlerts.length > 0) {
+    // tomamos el primer mensaje (puedes recorrer todos si quieres mostrar varios)
+    const msg = allAlerts[0];
+    document.getElementById("alertModalBody").innerText = `[${msg.level.toUpperCase()}] ${msg.message}`;
+    const modal = new bootstrap.Modal(document.getElementById('alertModal'));
+    modal.show();
+  }
+});
+</script>
+{% endblock %}

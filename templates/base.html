@@ -1,0 +1,75 @@
+{% load static %}
+{% load widget_tweaks %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    
+    <title>{% block title %}Dashboard{% endblock %} - Trezo</title>
+
+    <!-- CSS Files -->
+    <link rel="stylesheet" href="{% static 'assets/css/sidebar-menu.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/css/simplebar.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/css/apexcharts.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/css/prism.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/css/rangeslider.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/css/quill.snow.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/css/google-icon.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/css/remixicon.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/css/swiper-bundle.min.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/css/fullcalendar.main.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/css/jsvectormap.min.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/css/lightpick.css' %}">
+    <link rel="stylesheet" href="{% static 'assets/css/style.css' %}">
+    
+    <link rel="icon" type="image/png" href="{% static 'assets/images/favicon.png' %}">
+    
+    {% block extra_css %}{% endblock %}
+</head>
+<body class="boxed-size">
+    {% include "includes/preloader.html" %}
+    
+    {% include "includes/sidebar.html" %}
+    
+    <div class="container-fluid">
+        <div class="main-content d-flex flex-column">
+            {% include "includes/header.html" %}
+
+            <div class="main-content-container overflow-hidden">
+                {% block content %}{% endblock %}
+            </div>
+
+            <div class="flex-grow-1"></div>
+
+            {% include "includes/footer.html" %}
+        </div>
+    </div>
+
+ 
+    <!-- JS Files -->
+    <script src="{% static 'assets/js/bootstrap.bundle.min.js' %}"></script>
+    <script src="{% static 'assets/js/sidebar-menu.js' %}"></script>
+    <script src="{% static 'assets/js/dragdrop.js' %}"></script>
+    <script src="{% static 'assets/js/rangeslider.min.js' %}"></script>
+    <script src="{% static 'assets/js/quill.min.js' %}"></script>
+    <script src="{% static 'assets/js/data-table.js' %}"></script>
+    <script src="{% static 'assets/js/prism.js' %}"></script>
+    <script src="{% static 'assets/js/clipboard.min.js' %}"></script>
+    <script src="{% static 'assets/js/feather.min.js' %}"></script>
+    <script src="{% static 'assets/js/simplebar.min.js' %}"></script>
+    <script src="{% static 'assets/js/apexcharts.min.js' %}"></script>
+    <script src="{% static 'assets/js/echarts.min.js' %}"></script>
+    <script src="{% static 'assets/js/swiper-bundle.min.js' %}"></script>
+    <script src="{% static 'assets/js/fullcalendar.main.js' %}"></script>
+    <script src="{% static 'assets/js/jsvectormap.min.js' %}"></script>
+    <script src="{% static 'assets/js/world-merc.js' %}"></script>
+    <script src="{% static 'assets/js/moment.min.js' %}"></script>
+    <script src="{% static 'assets/js/lightpick.js' %}"></script>
+    <script src="{% static 'assets/js/custom/apexcharts.js' %}"></script>
+    <script src="{% static 'assets/js/custom/echarts.js' %}"></script>
+    <script src="{% static 'assets/js/custom/custom.js' %}"></script>
+    
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

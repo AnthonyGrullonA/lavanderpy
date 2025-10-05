@@ -1,0 +1,176 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Dashboard — Lavandería{% endblock %}
+
+{% block content %}
+<div class="row g-4">
+  <div class="col-xxl-6">
+    <div class="card border-0 rounded-3 bg-white mb-4 p-4">
+      <div class="d-flex justify-content-between align-items-center">
+        <h2 class="mb-0">Resumen de hoy</h2>
+        <span class="badge bg-primary">Lavandería</span>
+      </div>
+      <p class="text-muted mb-4">Estado general de órdenes y caja.</p>
+
+      <div class="row g-3">
+        <div class="col-sm-6">
+          <div class="p-3 rounded-3 border">
+            <div class="d-flex align-items-center justify-content-between">
+              <span class="text-secondary">Órdenes creadas</span>
+              <span class="material-symbols-outlined">assignment</span>
+            </div>
+            <h3 class="mt-2 mb-0">128</h3>
+            <small class="text-success">+5.4% vs 30 días</small>
+          </div>
+        </div>
+        <div class="col-sm-6">
+          <div class="p-3 rounded-3 border">
+            <div class="d-flex align-items-center justify-content-between">
+              <span class="text-secondary">En proceso</span>
+              <span class="material-symbols-outlined">local_laundry_service</span>
+            </div>
+            <h3 class="mt-2 mb-0">37</h3>
+            <small class="text-warning">–3.2% vs 30 días</small>
+          </div>
+        </div>
+        <div class="col-sm-6">
+          <div class="p-3 rounded-3 border">
+            <div class="d-flex align-items-center justify-content-between">
+              <span class="text-secondary">Entregas de hoy</span>
+              <span class="material-symbols-outlined">task_alt</span>
+            </div>
+            <h3 class="mt-2 mb-0">91</h3>
+            <small class="text-success">+3.4% vs 30 días</small>
+          </div>
+        </div>
+        <div class="col-sm-6">
+          <div class="p-3 rounded-3 border">
+            <div class="d-flex align-items-center justify-content-between">
+              <span class="text-secondary">Ingresos (RD$)</span>
+              <span class="material-symbols-outlined">paid</span>
+            </div>
+            <h3 class="mt-2 mb-0">85,420</h3>
+            <small class="text-success">+2.1% vs 30 días</small>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card bg-white border-0 rounded-3 mb-4">
+      <div class="card-body p-4">
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-3">
+          <h3 class="mb-0 text-secondary">Órdenes recientes</h3>
+          <a href="/orders/" class="btn btn-sm btn-outline-primary">Ver todas</a>
+        </div>
+        <div class="table-responsive">
+          <table class="table align-middle">
+            <thead>
+              <tr class="border-bottom">
+                <th>Folio</th>
+                <th>Cliente</th>
+                <th>Prendas</th>
+                <th>Entrega</th>
+                <th>Total</th>
+                <th>Estado</th>
+                <th class="text-end">Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>#001245</td><td>María Gómez</td><td>7</td><td>Hoy 5:00 PM</td>
+                <td>RD$ 1,250.00</td><td><span class="badge bg-success">Entregada</span></td>
+                <td class="text-end"><a href="#" class="btn btn-sm btn-light">Ver</a></td>
+              </tr>
+              <tr>
+                <td>#001246</td><td>Carlos Pérez</td><td>12</td><td>Mañana 11:00 AM</td>
+                <td>RD$ 2,050.00</td><td><span class="badge bg-warning text-dark">En proceso</span></td>
+                <td class="text-end"><a href="#" class="btn btn-sm btn-light">Ver</a></td>
+              </tr>
+              <tr>
+                <td>#001247</td><td>Lucía Castro</td><td>4</td><td>Hoy 7:30 PM</td>
+                <td>RD$ 630.00</td><td><span class="badge bg-info">Listo</span></td>
+                <td class="text-end"><a href="#" class="btn btn-sm btn-light">Ver</a></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-xxl-6">
+    <div class="row g-4 mb-4">
+      <div class="col-md-6">
+        <div class="card bg-white border-0 rounded-3 h-100">
+          <div class="card-body p-4">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+              <h3 class="mb-0">Alerta de insumos</h3>
+              <a href="/inventory/" class="btn btn-sm btn-outline-secondary">Abrir inventario</a>
+            </div>
+            <ul class="list-unstyled mb-0">
+              <li class="d-flex justify-content-between py-2 border-bottom"><span>Detergente líquido</span><strong class="text-danger">2 u.</strong></li>
+              <li class="d-flex justify-content-between py-2 border-bottom"><span>Suavizante</span><strong class="text-danger">5 u.</strong></li>
+              <li class="d-flex justify-content-between py-2"><span>Bolsas para entrega</span><strong class="text-warning">12 u.</strong></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-6">
+        <div class="card bg-white border-0 rounded-3 h-100">
+          <div class="card-body p-4">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+              <h3 class="mb-0">Rendimiento del equipo</h3>
+              <a href="/reports/" class="btn btn-sm btn-outline-secondary">Ver reporte</a>
+            </div>
+            <ul class="list-unstyled mb-0">
+              <li class="d-flex justify-content-between py-2 border-bottom"><span>Operario A</span><strong>98 pts</strong></li>
+              <li class="d-flex justify-content-between py-2 border-bottom"><span>Operario B</span><strong>92 pts</strong></li>
+              <li class="d-flex justify-content-between py-2"><span>Operario C</span><strong>88 pts</strong></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card bg-white border-0 rounded-3">
+      <div class="card-body p-4">
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-2">
+          <h3 class="mb-0">Órdenes por estado (últimos 7 días)</h3>
+          <div class="dropdown">
+            <button class="btn btn-sm btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown">Semanal</button>
+            <ul class="dropdown-menu">
+              <li><button class="dropdown-item">Diario</button></li>
+              <li><button class="dropdown-item">Semanal</button></li>
+              <li><button class="dropdown-item">Mensual</button></li>
+            </ul>
+          </div>
+        </div>
+        <div id="orders_chart"></div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'assets/js/apexcharts.min.js' %}"></script>
+<script>
+  const el = document.querySelector('#orders_chart');
+  if (el) {
+    const chart = new ApexCharts(el, {
+      chart: { type: 'area', height: 260, toolbar: { show: false } },
+      series: [
+        { name: 'Nuevas', data: [12,15,9,18,20,14,16] },
+        { name: 'Proceso', data: [8,7,12,9,11,10,13] },
+        { name: 'Entregadas', data: [10,12,14,16,18,20,22] }
+      ],
+      xaxis: { categories: ['Lun','Mar','Mié','Jue','Vie','Sáb','Dom'] },
+      dataLabels: { enabled: false },
+      stroke: { curve: 'smooth' }
+    });
+    chart.render();
+  }
+</script>
+{% endblock %}
