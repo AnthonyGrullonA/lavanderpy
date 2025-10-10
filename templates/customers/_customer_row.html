@@ -1,0 +1,42 @@
+<tr>
+  <td>#{{ customer.id }}</td>
+  <td>{{ customer.name }}</td>
+  <td>{{ customer.email|default:"—" }}</td>
+  <td>{{ customer.phone|default:"—" }}</td>
+  <td>{{ customer.customer_type|title }}</td>
+  <td>
+    {% if customer.is_active %}
+      <span class="badge bg-primary bg-opacity-10 text-primary p-2 fs-12 fw-normal">Activo</span>
+    {% else %}
+      <span class="badge bg-danger bg-opacity-10 text-danger p-2 fs-12 fw-normal">Inactivo</span>
+    {% endif %}
+  </td>
+  <td>
+    <div class="d-flex align-items-center gap-1">
+      <!-- 👁️ Ver cliente (detalle normal) -->
+      <a href="{% url 'customers:detail' customer.id %}" 
+         class="ps-0 border-0 bg-transparent lh-1 position-relative top-2 text-primary"
+         title="Ver detalles">
+        <i class="material-symbols-outlined fs-16">visibility</i>
+      </a>
+
+      <!-- ✏️ Editar cliente (abre el mismo offcanvas por AJAX) -->
+      <button type="button" onclick="openEditCustomer({{ customer.id }})"
+              class="ps-0 border-0 bg-transparent lh-1 position-relative top-2 text-body"
+              title="Editar cliente">
+        <i class="material-symbols-outlined fs-16">edit</i>
+      </button>
+
+      <!-- 🗑️ Desactivar cliente -->
+      <form action="{% url 'customers:deactivate' customer.id %}" method="post" style="display:inline;">
+        {% csrf_token %}
+        <button type="submit" 
+                class="ps-0 border-0 bg-transparent lh-1 position-relative top-2 text-danger"
+                onclick="return confirm('¿Desactivar este cliente?')"
+                title="Desactivar cliente">
+          <i class="material-symbols-outlined fs-16">delete</i>
+        </button>
+      </form>
+    </div>
+  </td>
+</tr>

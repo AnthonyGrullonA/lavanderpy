@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}Detalle Cliente{% endblock %}
+
+{% block content %}
+<div class="container-fluid">
+  <div class="card bg-white border-0 rounded-3 p-4">
+    <h4 class="mb-3">{{ customer.name }}</h4>
+    <ul class="list-group list-group-flush mb-3">
+      <li class="list-group-item"><strong>Tipo:</strong> {{ customer.get_customer_type_display }}</li>
+      <li class="list-group-item"><strong>Correo:</strong> {{ customer.email|default:"—" }}</li>
+      <li class="list-group-item"><strong>Teléfono:</strong> {{ customer.phone|default:"—" }}</li>
+      <li class="list-group-item"><strong>Dirección:</strong> {{ customer.address|default:"—" }}</li>
+      <li class="list-group-item"><strong>Crédito:</strong> RD$ {{ customer.credit_limit }}</li>
+      <li class="list-group-item"><strong>Estado:</strong>
+        {% if customer.is_active %}
+          <span class="badge bg-success">Activo</span>
+        {% else %}
+          <span class="badge bg-secondary">Inactivo</span>
+        {% endif %}
+      </li>
+    </ul>
+    <div class="d-flex gap-2">
+      <a href="{% url 'customers:edit' customer.id %}" class="btn btn-outline-primary">Editar</a>
+      <a href="{% url 'customers:list' %}" class="btn btn-outline-secondary">Volver</a>
+    </div>
+  </div>
+</div>
+{% endblock %}

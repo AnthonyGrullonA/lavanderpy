@@ -1,0 +1,119 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}Servicios{% endblock %}
+
+{% block content %}
+<div class="main-content-container overflow-hidden">
+
+  <!-- Header -->
+  <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-4">
+    <h3 class="mb-0">Servicios</h3>
+    <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
+      <ol class="breadcrumb align-items-center mb-0 lh-1">
+        <li class="breadcrumb-item">
+          <a href="{% url 'dashboard:home' %}" class="d-flex align-items-center text-decoration-none">
+            <i class="ri-home-4-line fs-18 text-primary me-1"></i>
+            <span class="text-secondary fw-medium hover">Dashboard</span>
+          </a>
+        </li>
+        <li class="breadcrumb-item active" aria-current="page">
+          <span class="fw-medium">Servicios</span>
+        </li>
+      </ol>
+    </nav>
+  </div>
+
+  <!-- Tabla -->
+  <div class="card bg-white border-0 rounded-3 mb-4">
+    <div class="card-body p-0">
+      <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 p-4">
+        <form method="GET" class="position-relative table-src-form me-0">
+          <input type="text" name="q" class="form-control" value="{{ query }}" placeholder="Buscar servicio...">
+          <i class="material-symbols-outlined position-absolute top-50 start-0 translate-middle-y">search</i>
+        </form>
+        <button class="btn btn-outline-primary py-1 px-2 px-sm-4 fs-14 fw-medium rounded-3 hover-bg"
+                onclick="openCreateService()">
+          <span class="py-sm-1 d-block">
+            <i class="ri-add-line d-none d-sm-inline-block"></i>
+            <span>Agregar Servicio</span>
+          </span>
+        </button>
+      </div>
+
+      <div class="default-table-area style-two default-table-width">
+        <div class="table-responsive">
+          <table class="table align-middle">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Nombre</th>
+                <th>Tipo</th>
+                <th>Precio</th>
+                <th>Estado</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody id="service-table-body">
+              {% for service in services %}
+                {% include "catalog/_service_row.html" %}
+              {% empty %}
+                <tr><td colspan="6" class="text-center py-4 text-muted">No hay servicios registrados.</td></tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Offcanvas -->
+<div class="offcanvas offcanvas-end bg-white" tabindex="-1" id="offcanvasService"
+     aria-labelledby="offcanvasServiceLabel"
+     style="box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;">
+  <div class="offcanvas-header bg-primary py-3 px-4">
+    <h5 class="offcanvas-title fs-18 text-white" id="offcanvasServiceLabel">Agregar Servicio</h5>
+    <button type="button" class="btn-close text-white" data-bs-dismiss="offcanvas"
+            aria-label="Close" style="filter: invert(1); opacity: 1;"></button>
+  </div>
+  <div class="offcanvas-body p-4" id="offcanvasServiceBody">
+    {% include "catalog/form.html" %}
+  </div>
+</div>
+
+<!-- Mostrar offcanvas si hay errores -->
+{% if form and form.errors %}
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  const el = document.getElementById('offcanvasService');
+  if (el && window.bootstrap) new bootstrap.Offcanvas(el).show();
+});
+</script>
+{% endif %}
+
+<!-- ====================== -->
+<!-- JS: Crear / Editar AJAX -->
+<!-- ====================== -->
+<script>
+function openCreateService() {
+  document.getElementById("offcanvasServiceLabel").innerText = "Agregar Servicio";
+  fetch("{% url 'catalog:add' %}")
+    .then(() => {
+      document.getElementById("offcanvasServiceBody").innerHTML = `{% include "catalog/form.html" %}`;
+      new bootstrap.Offcanvas('#offcanvasService').show();
+    });
+}
+
+function openEditService(id) {
+  fetch(`/catalog/${id}/edit/`)
+    .then(res => res.json())
+    .then(data => {
+      if (data.html) {
+        document.querySelector('#offcanvasServiceBody').innerHTML = data.html;
+        document.querySelector('#offcanvasServiceLabel').innerText = 'Editar Servicio';
+        new bootstrap.Offcanvas('#offcanvasService').show();
+      }
+    });
+}
+</script>
+{% endblock %}

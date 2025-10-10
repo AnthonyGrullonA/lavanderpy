@@ -1,0 +1,35 @@
+<tr>
+  <td>#{{ item.id }}</td>
+  <td>{{ item.name }}</td>
+  <td>{{ item.unit.abbreviation }}</td>
+  <td class="{% if item.is_below_min %}text-danger{% endif %}">
+    {{ item.current_stock }}
+  </td>
+  <td>{{ item.min_stock }}</td>
+  <td>
+    {% if item.is_active %}
+      <span class="badge bg-primary bg-opacity-10 text-primary p-2 fs-12 fw-normal">Activo</span>
+      {% if item.is_below_min %}
+        <span class="badge bg-danger bg-opacity-10 text-danger p-2 fs-12 fw-normal ms-1">Bajo stock</span>
+      {% endif %}
+    {% else %}
+      <span class="badge bg-danger bg-opacity-10 text-danger p-2 fs-12 fw-normal">Inactivo</span>
+    {% endif %}
+  </td>
+  <td>
+    <div class="d-flex align-items-center gap-1">
+      <button type="button" onclick="openEditItem({{ item.id }})"
+              class="ps-0 border-0 bg-transparent lh-1 position-relative top-2">
+        <i class="material-symbols-outlined fs-16 text-body">edit</i>
+      </button>
+
+      <form method="POST" action="{% url 'inventory:deactivate' item.id %}" style="display:inline;">
+        {% csrf_token %}
+        <button type="submit" class="ps-0 border-0 bg-transparent lh-1 text-danger"
+                onclick="return confirm('¿Desactivar este insumo?')">
+          <i class="material-symbols-outlined fs-16">block</i>
+        </button>
+      </form>
+    </div>
+  </td>
+</tr>

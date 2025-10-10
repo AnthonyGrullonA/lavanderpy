@@ -1,8 +1,7 @@
 {% load static %}
 <div class="sidebar-area" id="sidebar-area">
     <div class="logo position-relative">
-        <a href="{% url 'dashboard' as dashboard_url %}{{ dashboard_url|default:'#' }}"
-            class="d-block text-decoration-none position-relative">
+        <a href="{% url 'dashboard:home' %}" class="d-block text-decoration-none position-relative">
             <img src="{% static 'assets/images/logo-icon.png' %}" alt="logo-icon">
             <span class="logo-text fw-bold text-dark">Lavandería</span>
         </a>
@@ -20,10 +19,32 @@
             <li class="menu-title small text-uppercase">
                 <span class="menu-title-text">Principal</span>
             </li>
-            <li class="menu-item">
-                <a href="{% url 'dashboard' as dashboard_url %}{{ dashboard_url|default:'#' }}" class="menu-link">
+            <li class="menu-item {% if request.resolver_match.app_name == 'dashboard' %}active{% endif %}">
+                <a href="{% url 'dashboard:home' %}" class="menu-link">
                     <span class="material-symbols-outlined menu-icon">dashboard</span>
                     <span class="title">Dashboard</span>
+                </a>
+            </li>
+
+            <!-- Catálogo -->
+            <li class="menu-title small text-uppercase">
+                <span class="menu-title-text">Catálogo</span>
+            </li>
+            <li class="menu-item {% if request.resolver_match.app_name == 'catalog' %}active{% endif %}">
+                <a href="{% url 'catalog:list' %}" class="menu-link">
+                    <span class="material-symbols-outlined menu-icon">local_laundry_service</span>
+                    <span class="title">Servicios</span>
+                </a>
+            </li>
+
+            <!-- Clientes -->
+            <li class="menu-title small text-uppercase">
+                <span class="menu-title-text">Clientes</span>
+            </li>
+            <li class="menu-item {% if request.resolver_match.app_name == 'customers' %}active{% endif %}">
+                <a href="{% url 'customers:list' %}" class="menu-link">
+                    <span class="material-symbols-outlined menu-icon">group</span>
+                    <span class="title">Clientes</span>
                 </a>
             </li>
 
@@ -37,40 +58,18 @@
                     <span class="title">Órdenes</span>
                 </a>
             </li>
-            <li class="menu-item">
-                <a href="{% url 'deliveries' as deliveries_url %}{{ deliveries_url|default:'#' }}" class="menu-link">
-                    <span class="material-symbols-outlined menu-icon">local_shipping</span>
-                    <span class="title">Entregas</span>
-                </a>
-            </li>
-
-            <!-- Clientes -->
-            <li class="menu-title small text-uppercase">
-                <span class="menu-title-text">Clientes</span>
-            </li>
-            <li class="menu-item">
-                <a href="{% url 'customers' as customers_url %}{{ customers_url|default:'#' }}" class="menu-link">
-                    <span class="material-symbols-outlined menu-icon">group</span>
-                    <span class="title">Clientes</span>
-                </a>
-            </li>
 
             <!-- Inventario -->
             <li class="menu-title small text-uppercase">
                 <span class="menu-title-text">Inventario</span>
             </li>
-            <li class="menu-item">
-                <a href="{% url 'inventory' as inventory_url %}{{ inventory_url|default:'#' }}" class="menu-link">
+            <li class="menu-item {% if request.resolver_match.app_name == 'inventory' %}active{% endif %}">
+                <a href="{% url 'inventory:list' %}" class="menu-link">
                     <span class="material-symbols-outlined menu-icon">inventory_2</span>
                     <span class="title">Insumos</span>
                 </a>
             </li>
-            <li class="menu-item">
-                <a href="{% url 'suppliers' as suppliers_url %}{{ suppliers_url|default:'#' }}" class="menu-link">
-                    <span class="material-symbols-outlined menu-icon">store</span>
-                    <span class="title">Proveedores</span>
-                </a>
-            </li>
+
 
             <!-- Finanzas -->
             <li class="menu-title small text-uppercase">

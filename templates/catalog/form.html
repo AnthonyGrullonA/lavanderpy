@@ -1,0 +1,47 @@
+{% load widget_tweaks %}
+<form method="POST" action="{% if form.instance.pk %}{% url 'catalog:edit' form.instance.pk %}{% else %}{% url 'catalog:add' %}{% endif %}">
+  {% csrf_token %}
+  {% if form.errors %}
+    <div class="alert alert-danger">Por favor corrige los errores antes de continuar.</div>
+  {% endif %}
+
+  <div class="mb-3">
+    <label class="form-label">Nombre del servicio</label>
+    {{ form.name|add_class:"form-control" }}
+  </div>
+
+  <div class="mb-3">
+    <label class="form-label">Categoría</label>
+    {{ form.category|add_class:"form-select" }}
+  </div>
+
+  <div class="mb-3">
+    <label class="form-label">Descripción</label>
+    {{ form.description|add_class:"form-control" }}
+  </div>
+
+  <div class="mb-3">
+    <label class="form-label">Tipo de unidad</label>
+    {{ form.unit_type|add_class:"form-select" }}
+  </div>
+
+  <div class="mb-3">
+    <label class="form-label">Precio base (RD$)</label>
+    {{ form.base_price|add_class:"form-control" }}
+  </div>
+
+  <div class="mb-3">
+    <label class="form-label">Tiempo estimado (minutos)</label>
+    {{ form.estimated_time_minutes|add_class:"form-control" }}
+  </div>
+
+  <div class="form-check mb-3">
+    {{ form.is_express_available|add_class:"form-check-input" }}
+    <label class="form-check-label">Servicio express disponible</label>
+  </div>
+
+  <button type="submit" class="btn btn-primary w-100">
+    <i class="ri-check-line me-1"></i>
+    {% if form.instance.pk %}Actualizar{% else %}Guardar{% endif %} Servicio
+  </button>
+</form>

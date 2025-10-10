@@ -1,0 +1,28 @@
+<tr>
+  <td>#{{ service.id }}</td>
+  <td>{{ service.name }}</td>
+  <td>{{ service.get_unit_type_display }}</td>
+  <td>RD$ {{ service.base_price }}</td>
+  <td>
+    {% if service.is_active %}
+      <span class="badge bg-primary bg-opacity-10 text-primary p-2 fs-12 fw-normal">Activo</span>
+    {% else %}
+      <span class="badge bg-danger bg-opacity-10 text-danger p-2 fs-12 fw-normal">Inactivo</span>
+    {% endif %}
+  </td>
+  <td>
+    <div class="d-flex align-items-center gap-1">
+      <button type="button" onclick="openEditService({{ service.id }})"
+              class="ps-0 border-0 bg-transparent lh-1 position-relative top-2">
+        <i class="material-symbols-outlined fs-16 text-body">edit</i>
+      </button>
+      <form method="POST" action="{% url 'catalog:deactivate' service.id %}">
+        {% csrf_token %}
+        <button type="submit" class="ps-0 border-0 bg-transparent lh-1 text-danger"
+                onclick="return confirm('¿Desactivar este servicio?')">
+          <i class="material-symbols-outlined fs-16">block</i>
+        </button>
+      </form>
+    </div>
+  </td>
+</tr>
