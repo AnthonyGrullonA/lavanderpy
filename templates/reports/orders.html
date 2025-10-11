@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Reporte de Órdenes{% endblock %}
+
+{% block content %}
+<div class="main-content-container overflow-hidden">
+  <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-4">
+    <h3 class="mb-0">Reporte de Órdenes y Ventas</h3>
+    <form method="get" class="d-flex gap-2">
+      <input type="date" name="start" value="{{ start|date:'Y-m-d' }}" class="form-control form-control-sm">
+      <input type="date" name="end" value="{{ end|date:'Y-m-d' }}" class="form-control form-control-sm">
+      <button class="btn btn-primary btn-sm"><i class="ri-filter-line"></i> Filtrar</button>
+    </form>
+  </div>
+
+  <!-- 🔹 Cards resumen -->
+  <div class="row g-3 mb-4">
+    <div class="col-md-3">
+      <div class="card shadow-sm border-0 p-3">
+        <h6 class="text-muted mb-1">Total de Órdenes</h6>
+        <h4 class="fw-semibold">{{ total_orders }}</h4>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card shadow-sm border-0 p-3">
+        <h6 class="text-muted mb-1">Ventas Totales</h6>
+        <h4 class="fw-semibold text-success">RD$ {{ total_sales }}</h4>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card shadow-sm border-0 p-3">
+        <h6 class="text-muted mb-1">Ticket Promedio</h6>
+        <h4 class="fw-semibold text-info">RD$ {{ avg_ticket|floatformat:2 }}</h4>
+      </div>
+    </div>
+  </div>
+
+  <!-- 🔹 Tabla principal -->
+  <div class="card border-0 shadow-sm mb-4">
+    <div class="card-body p-0">
+      <table class="table table-hover align-middle mb-0">
+        <thead class="bg-light">
+          <tr>
+            <th>Código</th>
+            <th>Cliente</th>
+            <th>Estado</th>
+            <th>Total</th>
+            <th>Fecha</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for order in orders %}
+          <tr>
+            <td><span class="fw-semibold">{{ order.code }}</span></td>
+            <td>{{ order.customer.name }}</td>
+            <td>{{ order.get_status_display }}</td>
+            <td>RD$ {{ order.final_amount }}</td>
+            <td>{{ order.date_created|date:"d/m/Y" }}</td>
+          </tr>
+          {% empty %}
+          <tr><td colspan="5" class="text-center text-muted py-3">No hay órdenes en este rango.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- 🔹 Top clientes y servicios -->
+  <div class="row g-3">
+    <div class="col-md-6">
+      <div class="card p-3 shadow-sm">
+        <h6 class="fw-semibold mb-2">🧺 Servicios más vendidos</h6>
+        <table class="table table-sm">
+          {% for s in top_services %}
+          <tr><td>{{ s.name }}</td><td class="text-end">RD$ {{ s.total }}</td></tr>
+          {% empty %}<tr><td colspan="2" class="text-center text-muted">Sin datos.</td></tr>{% endfor %}
+        </table>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="card p-3 shadow-sm">
+        <h6 class="fw-semibold mb-2">👥 Clientes principales</h6>
+        <table class="table table-sm">
+          {% for c in top_customers %}
+          <tr><td>{{ c.name }}</td><td class="text-end">RD$ {{ c.total }}</td></tr>
+          {% empty %}<tr><td colspan="2" class="text-center text-muted">Sin datos.</td></tr>{% endfor %}
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

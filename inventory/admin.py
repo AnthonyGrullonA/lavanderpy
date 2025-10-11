@@ -2,6 +2,9 @@ from django.contrib import admin
 from .models import Unit, InventoryItem, InventoryMovement
 
 
+# ======================================================
+# 🔹 ADMIN: UNIDADES DE MEDIDA
+# ======================================================
 @admin.register(Unit)
 class UnitAdmin(admin.ModelAdmin):
     list_display = ("name", "abbreviation")
@@ -10,6 +13,9 @@ class UnitAdmin(admin.ModelAdmin):
     list_per_page = 25
 
 
+# ======================================================
+# 🔹 ADMIN: INSUMOS DE INVENTARIO
+# ======================================================
 @admin.register(InventoryItem)
 class InventoryItemAdmin(admin.ModelAdmin):
     list_display = (
@@ -27,6 +33,7 @@ class InventoryItemAdmin(admin.ModelAdmin):
     ordering = ("name",)
     list_editable = ("current_stock", "min_stock", "cost_per_unit", "is_active")
     readonly_fields = ("last_restock_date",)
+    list_per_page = 25
 
     def stock_status(self, obj):
         """Muestra si el insumo está por debajo del mínimo."""
@@ -40,6 +47,9 @@ class InventoryItemAdmin(admin.ModelAdmin):
         return qs.select_related("unit")
 
 
+# ======================================================
+# 🔹 ADMIN: HISTORIAL DE MOVIMIENTOS
+# ======================================================
 @admin.register(InventoryMovement)
 class InventoryMovementAdmin(admin.ModelAdmin):
     """Historial detallado de movimientos de inventario."""
@@ -49,15 +59,17 @@ class InventoryMovementAdmin(admin.ModelAdmin):
         "quantity",
         "balance_after",
         "order",
-        "created_at",
+        "related_service",
         "user",
+        "created_at",
     )
     list_filter = ("movement_type", "created_at")
-    search_fields = ("item__name", "order__code", "notes")
-    readonly_fields = ("created_at",)
-    autocomplete_fields = ("item", "order", "user")
+    search_fields = ("item__name", "order__code", "notes", "related_service__name")
+    readonly_fields = ("created_at", "balance_after")
+    autocomplete_fields = ("item", "order", "user", "related_service")
     date_hierarchy = "created_at"
     ordering = ("-created_at",)
+    list_per_page = 25
 
     fieldsets = (
         (
@@ -67,6 +79,7 @@ class InventoryMovementAdmin(admin.ModelAdmin):
                     "movement_type",
                     "item",
                     "order",
+                    "related_service",
                     "quantity",
                     "balance_after",
                     "user",
@@ -81,11 +94,11 @@ class InventoryMovementAdmin(admin.ModelAdmin):
     )
 
     def has_add_permission(self, request):
-        """Permite solo a staff registrar movimientos manuales."""
+        """Solo usuarios staff pueden registrar movimientos manualmente."""
         return request.user.is_staff
 
     def save_model(self, request, obj, form, change):
-        """Asigna automáticamente el usuario si no está especificado."""
+        """Asigna el usuario automáticamente si no está especificado."""
         if not obj.user:
             obj.user = request.user
         super().save_model(request, obj, form, change)

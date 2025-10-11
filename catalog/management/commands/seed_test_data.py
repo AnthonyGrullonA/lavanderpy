@@ -6,15 +6,16 @@ import random
 
 
 class Command(BaseCommand):
-    help = "Carga datos de prueba completos: unidades, insumos, servicios, componentes, clientes y órdenes."
+    help = "Carga datos de prueba completos con flujo de órdenes, inventario y caja."
 
     def handle(self, *args, **options):
-        self.stdout.write("🚀 Iniciando seed de datos de prueba con flujo de inventario...")
+        self.stdout.write("🚀 Iniciando seed de datos de prueba...")
         with transaction.atomic():
             self.create_units()
             self.create_inventory_items()
             self.create_service_catalog()
             self.create_customers()
+            self.create_cash_register()
             self.create_orders()
         self.stdout.write(self.style.SUCCESS("✅ Seed completado correctamente."))
 
@@ -94,21 +95,13 @@ class Command(BaseCommand):
             blanqueador = InventoryItem.objects.filter(name__icontains="Blanqueador").first()
 
             if detergent:
-                ServiceComponent.objects.update_or_create(
-                    service=service, item=detergent, defaults={"quantity_used": Decimal("50.0")}
-                )
+                ServiceComponent.objects.update_or_create(service=service, item=detergent, defaults={"quantity_used": Decimal("50.0")})
             if "Lavado" in s["category"] and suavizante:
-                ServiceComponent.objects.update_or_create(
-                    service=service, item=suavizante, defaults={"quantity_used": Decimal("15.0")}
-                )
+                ServiceComponent.objects.update_or_create(service=service, item=suavizante, defaults={"quantity_used": Decimal("15.0")})
             if "Planchado" in s["category"] and bolsas:
-                ServiceComponent.objects.update_or_create(
-                    service=service, item=bolsas, defaults={"quantity_used": Decimal("1.0")}
-                )
+                ServiceComponent.objects.update_or_create(service=service, item=bolsas, defaults={"quantity_used": Decimal("1.0")})
             if "Tintorería" in s["category"] and blanqueador:
-                ServiceComponent.objects.update_or_create(
-                    service=service, item=blanqueador, defaults={"quantity_used": Decimal("80.0")}
-                )
+                ServiceComponent.objects.update_or_create(service=service, item=blanqueador, defaults={"quantity_used": Decimal("80.0")})
 
         self.stdout.write(f"🧺 Servicios y componentes creados: {len(services)}")
 
@@ -120,6 +113,7 @@ class Command(BaseCommand):
             {"name": "María Gómez", "customer_type": "personal", "email": "maria@example.com", "phone": "+1 809-111-0001", "address": "Calle 1", "contact_person": "", "credit_limit": 0},
             {"name": "Lavanderías Unidas SRL", "customer_type": "empresa", "email": "ventas@lu-srl.com", "phone": "+1 809-222-0002", "address": "Avenida Central 123", "contact_person": "Juan Pérez", "credit_limit": 10000},
             {"name": "Carlos Pérez", "customer_type": "personal", "email": "carlos@example.com", "phone": "+1 809-333-0003", "address": "Sector Los Jardines", "contact_person": "", "credit_limit": 0},
+            {"name": "Hotel Colonial", "customer_type": "empresa", "email": "compras@hotelcolonial.com", "phone": "+1 809-444-0004", "address": "Zona Colonial", "contact_person": "Ana López", "credit_limit": 15000},
         ]
 
         for c in clients:
@@ -137,32 +131,55 @@ class Command(BaseCommand):
             )
         self.stdout.write(f"👥 Clientes creados: {len(clients)}")
 
-    # === 5️⃣ ÓRDENES Y MOVIMIENTOS ===
+    # === 5️⃣ CAJA ===
+    def create_cash_register(self):
+        from cash.models import CashRegister
+        from django.contrib.auth import get_user_model
+
+        User = get_user_model()
+        user = User.objects.filter(is_superuser=True).first()
+
+        if not user:
+            user = User.objects.create_superuser(username="admin", password="admin123", email="admin@example.com")
+
+        register, created = CashRegister.objects.get_or_create(
+            name="Caja Principal",
+            defaults={
+                "opened_by": user,
+                "opening_balance": Decimal("1000.00"),
+                "is_open": True,
+            },
+        )
+
+        status = "abierta" if register.is_open else "cerrada"
+        self.stdout.write(f"💵 Caja principal {status}.")
+
+    # === 6️⃣ ÓRDENES ===
     def create_orders(self):
         from orders.models import Order, OrderLine, OrderTracking
         from customers.models import Customer
         from catalog.models import Service
+        from cash.models import CashRegister, CashMovement
 
         customers = list(Customer.objects.all())
         services = list(Service.objects.all())
+        register = CashRegister.objects.filter(is_open=True).last()
 
         if not customers or not services:
             self.stdout.write(self.style.WARNING("⚠️ No hay clientes o servicios disponibles."))
             return
 
-        statuses = ["pendiente", "en_proceso", "listo", "entregado"]
         orders_created = 0
 
-        for i in range(10):
+        for i in range(12):
             customer = random.choice(customers)
-            status = random.choice(statuses)
-
+            status = random.choice(["pendiente", "en_proceso", "listo", "entregado"])
             order = Order.objects.create(
                 customer=customer,
                 status=status,
-                notes=f"Orden generada automáticamente ({status})",
-                date_created=timezone.now() - timezone.timedelta(days=random.randint(0, 5)),
-                discount=random.choice([0, 25, 50]),
+                notes=f"Orden de prueba {i+1} ({status})",
+                date_created=timezone.now() - timezone.timedelta(days=random.randint(0, 7)),
+                discount=random.choice([0, 10, 25, 50]),
             )
 
             total = Decimal("0.00")
@@ -171,7 +188,6 @@ class Command(BaseCommand):
                 qty = Decimal(random.randint(1, 5))
                 unit_price = service.base_price
                 subtotal = unit_price * qty
-
                 OrderLine.objects.create(order=order, service=service, quantity=qty, unit_price=unit_price)
                 total += subtotal
 
@@ -179,19 +195,32 @@ class Command(BaseCommand):
             order.final_amount = total - order.discount
             order.save(update_fields=["total_amount", "final_amount"])
 
-            # Si está en proceso, consumir inventario
-            if status == "en_proceso":
+            # 🔹 Si está en proceso o entregada, consumir inventario
+            if status in ["en_proceso", "entregado"]:
                 try:
                     order.consume_inventory()
                 except Exception as e:
-                    self.stdout.write(self.style.ERROR(f"❌ Error al consumir inventario: {e}"))
+                    self.stdout.write(self.style.ERROR(f"❌ Error inventario: {e}"))
+
+            # 🔹 Si está entregada → registrar movimiento de caja
+            if status == "entregado" and register:
+                from cash.models import CashMovement
+                CashMovement.objects.create(
+                    register=register,
+                    movement_type="ingreso",
+                    amount=order.final_amount,
+                    description=f"Pago de orden {order.code}",
+                    related_order=order,
+                    created_by=register.opened_by,
+                )
 
             OrderTracking.objects.create(
                 order=order,
                 previous_status=None,
                 new_status=status,
-                notes=f"Cambio automático a '{status}'",
+                notes=f"Creación automática: {status}",
             )
+
             orders_created += 1
 
         self.stdout.write(f"🧾 Órdenes creadas: {orders_created}")

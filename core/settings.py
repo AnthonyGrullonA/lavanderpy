@@ -31,7 +31,6 @@ THIRD_PARTY_APPS = [
 LOCAL_APPS = [
     "dashboard",
     "accounts",
-    "billing",
     "cash",
     "catalog",
     "customers",

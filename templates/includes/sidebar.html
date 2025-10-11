@@ -1,150 +1,212 @@
 {% load static %}
 <div class="sidebar-area" id="sidebar-area">
-    <div class="logo position-relative">
-        <a href="{% url 'dashboard:home' %}" class="d-block text-decoration-none position-relative">
-            <img src="{% static 'assets/images/logo-icon.png' %}" alt="logo-icon">
-            <span class="logo-text fw-bold text-dark">Lavandería</span>
+  <div class="logo position-relative">
+    <a href="{% url 'dashboard:home' %}" class="d-block text-decoration-none position-relative">
+      <img src="{% static 'assets/images/logo-icon.png' %}" alt="logo-icon">
+      <span class="logo-text fw-bold text-dark">Lavandería</span>
+    </a>
+    <button
+      class="sidebar-burger-menu bg-transparent p-0 border-0 opacity-0 z-n1 position-absolute top-50 end-0 translate-middle-y"
+      id="sidebar-burger-menu">
+      <i data-feather="x"></i>
+    </button>
+  </div>
+
+  <aside id="layout-menu" class="layout-menu menu-vertical menu active" data-simplebar>
+    <ul class="menu-inner">
+
+      <!-- ================================== -->
+      <!-- 🏠 PRINCIPAL -->
+      <!-- ================================== -->
+      <li class="menu-title small text-uppercase">
+        <span class="menu-title-text">Principal</span>
+      </li>
+      <li class="menu-item {% if request.resolver_match.app_name == 'dashboard' %}active{% endif %}">
+        <a href="{% url 'dashboard:home' %}" class="menu-link">
+          <span class="material-symbols-outlined menu-icon">dashboard</span>
+          <span class="title">Dashboard</span>
         </a>
-        <button
-            class="sidebar-burger-menu bg-transparent p-0 border-0 opacity-0 z-n1 position-absolute top-50 end-0 translate-middle-y"
-            id="sidebar-burger-menu">
-            <i data-feather="x"></i>
-        </button>
-    </div>
+      </li>
 
-    <aside id="layout-menu" class="layout-menu menu-vertical menu active" data-simplebar>
-        <ul class="menu-inner">
+      <!-- ================================== -->
+      <!-- 🧺 CATÁLOGO -->
+      <!-- ================================== -->
+      <li class="menu-title small text-uppercase">
+        <span class="menu-title-text">Catálogo</span>
+      </li>
+      <li class="menu-item {% if request.resolver_match.app_name == 'catalog' %}active{% endif %}">
+        <a href="{% url 'catalog:list' %}" class="menu-link">
+          <span class="material-symbols-outlined menu-icon">local_laundry_service</span>
+          <span class="title">Servicios</span>
+        </a>
+      </li>
 
-            <!-- Principal -->
-            <li class="menu-title small text-uppercase">
-                <span class="menu-title-text">Principal</span>
-            </li>
-            <li class="menu-item {% if request.resolver_match.app_name == 'dashboard' %}active{% endif %}">
-                <a href="{% url 'dashboard:home' %}" class="menu-link">
-                    <span class="material-symbols-outlined menu-icon">dashboard</span>
-                    <span class="title">Dashboard</span>
-                </a>
-            </li>
+      <!-- ================================== -->
+      <!-- 👥 CLIENTES -->
+      <!-- ================================== -->
+      <li class="menu-title small text-uppercase">
+        <span class="menu-title-text">Clientes</span>
+      </li>
+      <li class="menu-item {% if request.resolver_match.app_name == 'customers' %}active{% endif %}">
+        <a href="{% url 'customers:list' %}" class="menu-link">
+          <span class="material-symbols-outlined menu-icon">group</span>
+          <span class="title">Clientes</span>
+        </a>
+      </li>
 
-            <!-- Catálogo -->
-            <li class="menu-title small text-uppercase">
-                <span class="menu-title-text">Catálogo</span>
-            </li>
-            <li class="menu-item {% if request.resolver_match.app_name == 'catalog' %}active{% endif %}">
-                <a href="{% url 'catalog:list' %}" class="menu-link">
-                    <span class="material-symbols-outlined menu-icon">local_laundry_service</span>
-                    <span class="title">Servicios</span>
-                </a>
-            </li>
+      <!-- ================================== -->
+      <!-- 📦 OPERACIONES / ÓRDENES -->
+      <!-- ================================== -->
+      <li class="menu-title small text-uppercase">
+        <span class="menu-title-text">Operaciones</span>
+      </li>
 
-            <!-- Clientes -->
-            <li class="menu-title small text-uppercase">
-                <span class="menu-title-text">Clientes</span>
-            </li>
-            <li class="menu-item {% if request.resolver_match.app_name == 'customers' %}active{% endif %}">
-                <a href="{% url 'customers:list' %}" class="menu-link">
-                    <span class="material-symbols-outlined menu-icon">group</span>
-                    <span class="title">Clientes</span>
-                </a>
-            </li>
+      <li class="menu-item {% if request.resolver_match.app_name == 'orders' and request.resolver_match.url_name == 'list' %}active{% endif %}">
+        <a href="{% url 'orders:list' %}" class="menu-link">
+          <span class="material-symbols-outlined menu-icon">assignment</span>
+          <span class="title">Órdenes</span>
+        </a>
+      </li>
 
-            <!-- Órdenes -->
-            <li class="menu-title small text-uppercase">
-                <span class="menu-title-text">Operaciones</span>
-            </li>
+      <li class="menu-item {% if request.resolver_match.app_name == 'orders' and request.resolver_match.url_name == 'add' %}active{% endif %}">
+        <a href="{% url 'orders:add' %}" class="menu-link">
+          <span class="material-symbols-outlined menu-icon">add_task</span>
+          <span class="title">Nueva Orden</span>
+        </a>
+      </li>
 
-            <li class="menu-item {% if request.resolver_match.app_name == 'orders' %}active{% endif %}">
-                <a href="{% url 'orders:list' %}" class="menu-link">
-                    <span class="material-symbols-outlined menu-icon">assignment</span>
-                    <span class="title">Órdenes</span>
-                </a>
-            </li>
+      <li class="menu-item {% if request.resolver_match.url_name == 'pending' %}active{% endif %}">
+        <a href="{% url 'orders:pending' %}" class="menu-link">
+          <span class="material-symbols-outlined menu-icon">hourglass_empty</span>
+          <span class="title">Pendientes</span>
+        </a>
+      </li>
 
-            <li class="menu-item {% if request.resolver_match.url_name == 'orders_create' %}active{% endif %}">
-                <a href="{% url 'orders:add' %}" class="menu-link">
-                    <span class="material-symbols-outlined menu-icon">add_task</span>
-                    <span class="title">Nueva Orden</span>
-                </a>
-            </li>
+      <li class="menu-item {% if request.resolver_match.url_name == 'ready' %}active{% endif %}">
+        <a href="{% url 'orders:ready' %}" class="menu-link">
+          <span class="material-symbols-outlined menu-icon">done_all</span>
+          <span class="title">Listas para Entrega</span>
+        </a>
+      </li>
 
-            <li class="menu-item {% if request.resolver_match.url_name == 'orders_pending' %}active{% endif %}">
-                <a href="{% url 'orders:pending' %}" class="menu-link">
-                    <span class="material-symbols-outlined menu-icon">hourglass_empty</span>
-                    <span class="title">Pendientes</span>
-                </a>
-            </li>
+      <li class="menu-item {% if request.resolver_match.url_name == 'workflow' %}active{% endif %}">
+        <a href="{% url 'orders:workflow' %}" class="menu-link">
+          <span class="material-symbols-outlined menu-icon">device_hub</span>
+          <span class="title">Flujo de Órdenes</span>
+        </a>
+      </li>
 
-            <li class="menu-item {% if request.resolver_match.url_name == 'orders_ready' %}active{% endif %}">
-                <a href="{% url 'orders:ready' %}" class="menu-link">
-                    <span class="material-symbols-outlined menu-icon">done_all</span>
-                    <span class="title">Listas para entrega</span>
-                </a>
-            </li>
+      <!-- ================================== -->
+      <!-- 🧴 INVENTARIO -->
+      <!-- ================================== -->
+      <li class="menu-title small text-uppercase">
+        <span class="menu-title-text">Inventario</span>
+      </li>
 
-            <li class="menu-item {% if request.resolver_match.url_name == 'orders_workflow' %}active{% endif %}">
-                <a href="{% url 'orders:workflow' %}" class="menu-link">
-                    <span class="material-symbols-outlined menu-icon">device_hub</span>
-                    <span class="title">Flujo de Órdenes</span>
-                </a>
-            </li>
+      <li class="menu-item {% if request.resolver_match.app_name == 'inventory' and request.resolver_match.url_name == 'list' %}active{% endif %}">
+        <a href="{% url 'inventory:list' %}" class="menu-link">
+          <span class="material-symbols-outlined menu-icon">inventory_2</span>
+          <span class="title">Insumos</span>
+        </a>
+      </li>
 
+      <li class="menu-item {% if request.resolver_match.url_name == 'movements' and request.resolver_match.app_name == 'inventory' %}active{% endif %}">
+        <a href="{% url 'inventory:movements' %}" class="menu-link">
+          <span class="material-symbols-outlined menu-icon">sync_alt</span>
+          <span class="title">Movimientos</span>
+        </a>
+      </li>
 
-            <!-- Inventario -->
-            <li class="menu-title small text-uppercase">
-                <span class="menu-title-text">Inventario</span>
-            </li>
+      <!-- ================================== -->
+      <!-- 💰 FINANZAS -->
+      <!-- ================================== -->
+      <li class="menu-title small text-uppercase">
+        <span class="menu-title-text">Finanzas</span>
+      </li>
 
-            <!-- Insumos -->
-            <li class="menu-item {% if request.resolver_match.url_name == 'inventory_list' %}active{% endif %}">
-                <a href="{% url 'inventory:list' %}" class="menu-link">
-                    <span class="material-symbols-outlined menu-icon">inventory_2</span>
-                    <span class="title">Insumos</span>
-                </a>
-            </li>
+      <li class="menu-item {% if request.resolver_match.app_name == 'cash' and request.resolver_match.url_name == 'list' %}active{% endif %}">
+        <a href="{% url 'cash:list' %}" class="menu-link">
+          <span class="material-symbols-outlined menu-icon">point_of_sale</span>
+          <span class="title">Cajas</span>
+        </a>
+      </li>
 
-            <!-- Movimientos de inventario -->
-            <li class="menu-item {% if request.resolver_match.url_name == 'inventory_movements' %}active{% endif %}">
-                <a href="{% url 'inventory:movements' %}" class="menu-link">
-                    <span class="material-symbols-outlined menu-icon">sync_alt</span>
-                    <span class="title">Movimientos</span>
-                </a>
-            </li>
+      <li class="menu-item {% if request.resolver_match.app_name == 'cash' and request.resolver_match.url_name == 'movements' %}active{% endif %}">
+        <a href="{% url 'cash:movements' %}" class="menu-link">
+          <span class="material-symbols-outlined menu-icon">payments</span>
+          <span class="title">Movimientos</span>
+        </a>
+      </li>
 
+      <li class="menu-item {% if request.resolver_match.app_name == 'cash' and request.resolver_match.url_name == 'movement_new' %}active{% endif %}">
+        <a href="{% url 'cash:movement_new' %}" class="menu-link">
+          <span class="material-symbols-outlined menu-icon">add_card</span>
+          <span class="title">Registrar Movimiento</span>
+        </a>
+      </li>
 
-            <!-- Finanzas -->
-            <li class="menu-title small text-uppercase">
-                <span class="menu-title-text">Finanzas</span>
-            </li>
-            <li class="menu-item">
-                <a href="{% url 'cash_register' as cash_url %}{{ cash_url|default:'#' }}" class="menu-link">
-                    <span class="material-symbols-outlined menu-icon">point_of_sale</span>
-                    <span class="title">Caja</span>
-                </a>
-            </li>
-            <li class="menu-item">
-                <a href="{% url 'reports' as reports_url %}{{ reports_url|default:'#' }}" class="menu-link">
-                    <span class="material-symbols-outlined menu-icon">bar_chart</span>
-                    <span class="title">Reportes</span>
-                </a>
-            </li>
+      <!-- ================================== -->
+      <!-- 📊 REPORTES -->
+      <!-- ================================== -->
+      <li class="menu-title small text-uppercase">
+        <span class="menu-title-text">Reportes</span>
+      </li>
 
-            <!-- Configuración -->
-            <li class="menu-title small text-uppercase">
-                <span class="menu-title-text">Configuración</span>
-            </li>
-            <li class="menu-item">
-                <a href="{% url 'account_settings' as settings_url %}{{ settings_url|default:'#' }}" class="menu-link">
-                    <span class="material-symbols-outlined menu-icon">settings</span>
-                    <span class="title">Mi Cuenta</span>
-                </a>
-            </li>
-            <li class="menu-item">
-                <a href="{% url 'accounts:logout' %}" class="menu-link">
-                    <span class="material-symbols-outlined menu-icon">logout</span>
-                    <span class="title">Cerrar Sesión</span>
-                </a>
-            </li>
+      <li class="menu-item {% if request.resolver_match.url_name == 'orders_report' %}active{% endif %}">
+        <a href="{% url 'reports:orders_report' %}" class="menu-link">
+          <span class="material-symbols-outlined menu-icon">bar_chart_4_bars</span>
+          <span class="title">Órdenes</span>
+        </a>
+      </li>
 
-        </ul>
-    </aside>
+      <li class="menu-item {% if request.resolver_match.url_name == 'inventory_report' %}active{% endif %}">
+        <a href="{% url 'reports:inventory_report' %}" class="menu-link">
+          <span class="material-symbols-outlined menu-icon">analytics</span>
+          <span class="title">Inventario</span>
+        </a>
+      </li>
+
+      <li class="menu-item {% if request.resolver_match.url_name == 'financial_report' %}active{% endif %}">
+        <a href="{% url 'reports:financial_report' %}" class="menu-link">
+          <span class="material-symbols-outlined menu-icon">insights</span>
+          <span class="title">Financieros</span>
+        </a>
+      </li>
+
+      <li class="menu-item {% if request.resolver_match.url_name == 'customers_report' %}active{% endif %}">
+        <a href="{% url 'reports:customers_report' %}" class="menu-link">
+          <span class="material-symbols-outlined menu-icon">group_add</span>
+          <span class="title">Clientes</span>
+        </a>
+      </li>
+
+      <li class="menu-item {% if request.resolver_match.url_name == 'services_report' %}active{% endif %}">
+        <a href="{% url 'reports:services_report' %}" class="menu-link">
+          <span class="material-symbols-outlined menu-icon">stacked_bar_chart</span>
+          <span class="title">Servicios</span>
+        </a>
+      </li>
+
+      <!-- ================================== -->
+      <!-- ⚙️ CONFIGURACIÓN -->
+      <!-- ================================== -->
+      <li class="menu-title small text-uppercase">
+        <span class="menu-title-text">Configuración</span>
+      </li>
+      <li class="menu-item">
+        <a href="/admin/" class="menu-link">
+          <span class="material-symbols-outlined menu-icon">settings</span>
+          <span class="title">Panel de Administración</span>
+        </a>
+      </li>
+
+      <li class="menu-item">
+        <a href="{% url 'accounts:logout' %}" class="menu-link">
+          <span class="material-symbols-outlined menu-icon">logout</span>
+          <span class="title">Cerrar Sesión</span>
+        </a>
+      </li>
+
+    </ul>
+  </aside>
 </div>

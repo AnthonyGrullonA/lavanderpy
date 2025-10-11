@@ -5,6 +5,9 @@
 
 {% block content %}
 <div class="row g-4">
+  <!-- ========================== -->
+  <!-- 🔹 Resumen del día -->
+  <!-- ========================== -->
   <div class="col-xxl-6">
     <div class="card border-0 rounded-3 bg-white mb-4 p-4">
       <div class="d-flex justify-content-between align-items-center">
@@ -20,78 +23,80 @@
               <span class="text-secondary">Órdenes creadas</span>
               <span class="material-symbols-outlined">assignment</span>
             </div>
-            <h3 class="mt-2 mb-0">128</h3>
-            <small class="text-success">+5.4% vs 30 días</small>
+            <h3 class="mt-2 mb-0">{{ orders_today }}</h3>
           </div>
         </div>
+
         <div class="col-sm-6">
           <div class="p-3 rounded-3 border">
             <div class="d-flex align-items-center justify-content-between">
               <span class="text-secondary">En proceso</span>
               <span class="material-symbols-outlined">local_laundry_service</span>
             </div>
-            <h3 class="mt-2 mb-0">37</h3>
-            <small class="text-warning">–3.2% vs 30 días</small>
+            <h3 class="mt-2 mb-0">{{ in_process }}</h3>
           </div>
         </div>
+
         <div class="col-sm-6">
           <div class="p-3 rounded-3 border">
             <div class="d-flex align-items-center justify-content-between">
               <span class="text-secondary">Entregas de hoy</span>
               <span class="material-symbols-outlined">task_alt</span>
             </div>
-            <h3 class="mt-2 mb-0">91</h3>
-            <small class="text-success">+3.4% vs 30 días</small>
+            <h3 class="mt-2 mb-0">{{ delivered_today }}</h3>
           </div>
         </div>
+
         <div class="col-sm-6">
           <div class="p-3 rounded-3 border">
             <div class="d-flex align-items-center justify-content-between">
               <span class="text-secondary">Ingresos (RD$)</span>
               <span class="material-symbols-outlined">paid</span>
             </div>
-            <h3 class="mt-2 mb-0">85,420</h3>
-            <small class="text-success">+2.1% vs 30 días</small>
+            <h3 class="mt-2 mb-0">{{ cash_in|floatformat:2 }}</h3>
           </div>
         </div>
       </div>
     </div>
 
+    <!-- ========================== -->
+    <!-- 🔹 Órdenes recientes -->
+    <!-- ========================== -->
     <div class="card bg-white border-0 rounded-3 mb-4">
       <div class="card-body p-4">
         <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-3">
           <h3 class="mb-0 text-secondary">Órdenes recientes</h3>
-          <a href="/orders/" class="btn btn-sm btn-outline-primary">Ver todas</a>
+          <a href="{% url 'orders:list' %}" class="btn btn-sm btn-outline-primary">Ver todas</a>
         </div>
         <div class="table-responsive">
           <table class="table align-middle">
             <thead>
               <tr class="border-bottom">
-                <th>Folio</th>
-                <th>Cliente</th>
-                <th>Prendas</th>
-                <th>Entrega</th>
-                <th>Total</th>
-                <th>Estado</th>
-                <th class="text-end">Acciones</th>
+                <th>Código</th><th>Cliente</th><th>Total</th><th>Estado</th><th class="text-end">Acciones</th>
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <td>#001245</td><td>María Gómez</td><td>7</td><td>Hoy 5:00 PM</td>
-                <td>RD$ 1,250.00</td><td><span class="badge bg-success">Entregada</span></td>
-                <td class="text-end"><a href="#" class="btn btn-sm btn-light">Ver</a></td>
-              </tr>
-              <tr>
-                <td>#001246</td><td>Carlos Pérez</td><td>12</td><td>Mañana 11:00 AM</td>
-                <td>RD$ 2,050.00</td><td><span class="badge bg-warning text-dark">En proceso</span></td>
-                <td class="text-end"><a href="#" class="btn btn-sm btn-light">Ver</a></td>
-              </tr>
-              <tr>
-                <td>#001247</td><td>Lucía Castro</td><td>4</td><td>Hoy 7:30 PM</td>
-                <td>RD$ 630.00</td><td><span class="badge bg-info">Listo</span></td>
-                <td class="text-end"><a href="#" class="btn btn-sm btn-light">Ver</a></td>
-              </tr>
+              {% for order in recent_orders %}
+                <tr>
+                  <td>{{ order.code }}</td>
+                  <td>{{ order.customer.name }}</td>
+                  <td>RD$ {{ order.final_amount|floatformat:2 }}</td>
+                  <td>
+                    <span class="badge 
+                      {% if order.status == 'entregado' %}bg-success
+                      {% elif order.status == 'en_proceso' %}bg-warning text-dark
+                      {% elif order.status == 'listo' %}bg-info
+                      {% else %}bg-secondary{% endif %}">
+                      {{ order.get_status_display }}
+                    </span>
+                  </td>
+                  <td class="text-end">
+                    <a href="{% url 'orders:detail' order.pk %}" class="btn btn-sm btn-light">Ver</a>
+                  </td>
+                </tr>
+              {% empty %}
+                <tr><td colspan="5" class="text-center text-muted">No hay órdenes recientes.</td></tr>
+              {% endfor %}
             </tbody>
           </table>
         </div>
@@ -99,54 +104,64 @@
     </div>
   </div>
 
+  <!-- ========================== -->
+  <!-- 🔹 Columna lateral -->
+  <!-- ========================== -->
   <div class="col-xxl-6">
     <div class="row g-4 mb-4">
+      <!-- Inventario bajo -->
       <div class="col-md-6">
         <div class="card bg-white border-0 rounded-3 h-100">
           <div class="card-body p-4">
             <div class="d-flex justify-content-between align-items-center mb-2">
               <h3 class="mb-0">Alerta de insumos</h3>
-              <a href="/inventory/" class="btn btn-sm btn-outline-secondary">Abrir inventario</a>
+              <a href="{% url 'inventory:list' %}" class="btn btn-sm btn-outline-secondary">Ver todo</a>
             </div>
             <ul class="list-unstyled mb-0">
-              <li class="d-flex justify-content-between py-2 border-bottom"><span>Detergente líquido</span><strong class="text-danger">2 u.</strong></li>
-              <li class="d-flex justify-content-between py-2 border-bottom"><span>Suavizante</span><strong class="text-danger">5 u.</strong></li>
-              <li class="d-flex justify-content-between py-2"><span>Bolsas para entrega</span><strong class="text-warning">12 u.</strong></li>
+              {% for item in low_stock_alerts %}
+                <li class="d-flex justify-content-between py-2 border-bottom">
+                  <span>{{ item.name }}</span>
+                  <strong class="{% if item.status == 'danger' %}text-danger{% elif item.status == 'warning' %}text-warning{% else %}text-success{% endif %}">
+                    {{ item.stock }}
+                  </strong>
+                </li>
+              {% empty %}
+                <li class="text-muted">Inventario suficiente.</li>
+              {% endfor %}
             </ul>
           </div>
         </div>
       </div>
 
+      <!-- Caja / clientes -->
       <div class="col-md-6">
         <div class="card bg-white border-0 rounded-3 h-100">
           <div class="card-body p-4">
             <div class="d-flex justify-content-between align-items-center mb-2">
-              <h3 class="mb-0">Rendimiento del equipo</h3>
-              <a href="/reports/" class="btn btn-sm btn-outline-secondary">Ver reporte</a>
+              <h3 class="mb-0">Resumen financiero</h3>
+              <a href="{% url 'cash:list' %}" class="btn btn-sm btn-outline-secondary">Ver caja</a>
             </div>
             <ul class="list-unstyled mb-0">
-              <li class="d-flex justify-content-between py-2 border-bottom"><span>Operario A</span><strong>98 pts</strong></li>
-              <li class="d-flex justify-content-between py-2 border-bottom"><span>Operario B</span><strong>92 pts</strong></li>
-              <li class="d-flex justify-content-between py-2"><span>Operario C</span><strong>88 pts</strong></li>
+              <li class="d-flex justify-content-between py-2 border-bottom">
+                <span>Total clientes activos</span>
+                <strong>{{ total_customers }}</strong>
+              </li>
+              <li class="d-flex justify-content-between py-2">
+                <span>Balance en caja actual</span>
+                <strong>RD$ {{ cash_balance|floatformat:2 }}</strong>
+              </li>
             </ul>
           </div>
         </div>
       </div>
     </div>
 
+    <!-- ========================== -->
+    <!-- 🔹 Gráfico de órdenes -->
+    <!-- ========================== -->
     <div class="card bg-white border-0 rounded-3">
       <div class="card-body p-4">
-        <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mb-2">
-          <h3 class="mb-0">Órdenes por estado (últimos 7 días)</h3>
-          <div class="dropdown">
-            <button class="btn btn-sm btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown">Semanal</button>
-            <ul class="dropdown-menu">
-              <li><button class="dropdown-item">Diario</button></li>
-              <li><button class="dropdown-item">Semanal</button></li>
-              <li><button class="dropdown-item">Mensual</button></li>
-            </ul>
-          </div>
-        </div>
+        <h3 class="mb-3">Órdenes por estado (últimos 7 días)</h3>
         <div id="orders_chart"></div>
       </div>
     </div>
@@ -157,18 +172,22 @@
 {% block extra_js %}
 <script src="{% static 'assets/js/apexcharts.min.js' %}"></script>
 <script>
-  const el = document.querySelector('#orders_chart');
-  if (el) {
-    const chart = new ApexCharts(el, {
-      chart: { type: 'area', height: 260, toolbar: { show: false } },
-      series: [
-        { name: 'Nuevas', data: [12,15,9,18,20,14,16] },
-        { name: 'Proceso', data: [8,7,12,9,11,10,13] },
-        { name: 'Entregadas', data: [10,12,14,16,18,20,22] }
-      ],
-      xaxis: { categories: ['Lun','Mar','Mié','Jue','Vie','Sáb','Dom'] },
-      dataLabels: { enabled: false },
-      stroke: { curve: 'smooth' }
+  const chartEl = document.querySelector('#orders_chart');
+  if (chartEl) {
+    const chart = new ApexCharts(chartEl, {
+      chart: { type: 'bar', height: 280, toolbar: { show: false } },
+      series: [{
+        name: 'Órdenes',
+        data: [
+          {{ chart_data.pendiente }},
+          {{ chart_data.en_proceso }},
+          {{ chart_data.listo }},
+          {{ chart_data.entregado }}
+        ]
+      }],
+      xaxis: { categories: ['Pendientes','En proceso','Listas','Entregadas'] },
+      dataLabels: { enabled: true },
+      colors: ['#f39c12','#3498db','#1abc9c','#2ecc71']
     });
     chart.render();
   }

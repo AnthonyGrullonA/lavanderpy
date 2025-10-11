@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Nuevo Movimiento de Caja{% endblock %}
+
+{% block content %}
+<div class="main-content-container overflow-hidden">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h3 class="mb-0">Registrar Movimiento Manual</h3>
+    <a href="{% url 'cash:movements' %}" class="btn btn-outline-secondary btn-sm">
+      <i class="ri-arrow-left-line"></i> Volver
+    </a>
+  </div>
+
+  <div class="card border-0 shadow-sm">
+    <div class="card-body">
+      <form method="post">
+        {% csrf_token %}
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <label class="form-label">Tipo de Movimiento</label>
+            <select name="movement_type" class="form-select" required>
+              <option value="">Seleccionar...</option>
+              <option value="ingreso">Ingreso</option>
+              <option value="egreso">Egreso</option>
+            </select>
+          </div>
+          <div class="col-md-6 mb-3">
+            <label class="form-label">Monto (RD$)</label>
+            <input type="number" name="amount" class="form-control" step="0.01" min="0" required>
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Descripción</label>
+          <input type="text" name="description" class="form-control" maxlength="255" required>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Orden Relacionada (opcional)</label>
+          <input type="text" name="related_order" class="form-control" placeholder="ID de la orden (si aplica)">
+        </div>
+
+        <button type="submit" class="btn btn-primary w-100">
+          <i class="ri-check-line me-1"></i> Guardar Movimiento
+        </button>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -31,9 +31,6 @@ urlpatterns = [
     # 🔹 Órdenes de servicio
     path("orders/", include(("orders.urls", "orders"), namespace="orders")),
 
-    # 🔹 Facturación
-    path("billing/", include(("billing.urls", "billing"), namespace="billing")),
-
     # 🔹 Movimientos de caja
     path("cash/", include(("cash.urls", "cash"), namespace="cash")),
 

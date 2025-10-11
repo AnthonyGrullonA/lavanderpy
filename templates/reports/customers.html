@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block title %}Reporte de Clientes{% endblock %}
+{% block content %}
+<div class="main-content-container overflow-hidden">
+  <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-4">
+    <h3 class="mb-0">Reporte de Clientes</h3>
+    <form method="get" class="d-flex gap-2">
+      <input type="date" name="start" value="{{ start|date:'Y-m-d' }}" class="form-control form-control-sm">
+      <input type="date" name="end" value="{{ end|date:'Y-m-d' }}" class="form-control form-control-sm">
+      <button class="btn btn-primary btn-sm"><i class="ri-filter-line"></i> Filtrar</button>
+    </form>
+  </div>
+
+  <div class="card border-0 shadow-sm">
+    <div class="card-body p-0">
+      <table class="table align-middle table-hover mb-0">
+        <thead><tr><th>Cliente</th><th>Tipo</th><th>Órdenes</th><th>Total</th></tr></thead>
+        <tbody>
+          {% for c in customer_stats %}
+          <tr>
+            <td>{{ c.customer__name }}</td>
+            <td>{{ c.customer__customer_type|capfirst }}</td>
+            <td>{{ c.count }}</td>
+            <td>RD$ {{ c.total }}</td>
+          </tr>
+          {% empty %}
+          <tr><td colspan="4" class="text-center text-muted py-3">No hay datos de clientes.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}

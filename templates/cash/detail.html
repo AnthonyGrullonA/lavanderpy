@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Detalle de Caja{% endblock %}
+
+{% block content %}
+<div class="main-content-container overflow-hidden">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h3 class="mb-0">Caja: {{ register.name }}</h3>
+    <a href="{% url 'cash:list' %}" class="btn btn-outline-secondary btn-sm">
+      <i class="ri-arrow-left-line"></i> Volver
+    </a>
+  </div>
+
+  <div class="card border-0 shadow-sm mb-4">
+    <div class="card-body">
+      <h5 class="mb-3">Resumen</h5>
+      <p><strong>Abierta por:</strong> {{ register.opened_by }}</p>
+      <p><strong>Fecha de apertura:</strong> {{ register.opened_at|date:"d/m/Y H:i" }}</p>
+      {% if register.closed_at %}
+        <p><strong>Cerrada por:</strong> {{ register.closed_by }} el {{ register.closed_at|date:"d/m/Y H:i" }}</p>
+      {% endif %}
+      <hr>
+      <div class="d-flex justify-content-between flex-wrap">
+        <div><strong>Saldo inicial:</strong> RD$ {{ register.opening_balance }}</div>
+        <div><strong>Ingresos:</strong> RD$ {{ total_ingresos }}</div>
+        <div><strong>Egresos:</strong> RD$ {{ total_egresos }}</div>
+        <div><strong>Balance actual:</strong> <span class="text-primary fw-bold">RD$ {{ balance }}</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card border-0 shadow-sm">
+    <div class="card-body">
+      <h5 class="mb-3">Movimientos</h5>
+      <div class="table-responsive">
+        <table class="table table-striped align-middle">
+          <thead>
+            <tr>
+              <th>Tipo</th>
+              <th>Monto</th>
+              <th>Descripción</th>
+              <th>Orden</th>
+              <th>Registrado por</th>
+              <th>Fecha</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for m in movements %}
+              <tr>
+                <td>
+                  {% if m.movement_type == "ingreso" %}
+                    <span class="badge bg-success">Ingreso</span>
+                  {% else %}
+                    <span class="badge bg-danger">Egreso</span>
+                  {% endif %}
+                </td>
+                <td>RD$ {{ m.amount }}</td>
+                <td>{{ m.description }}</td>
+                <td>{% if m.related_order %}{{ m.related_order.code }}{% else %}-{% endif %}</td>
+                <td>{{ m.created_by }}</td>
+                <td>{{ m.created_at|date:"d/m/Y H:i" }}</td>
+              </tr>
+            {% empty %}
+              <tr><td colspan="6" class="text-center text-muted py-4">Sin movimientos registrados.</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

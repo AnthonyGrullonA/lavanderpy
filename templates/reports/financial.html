@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block title %}Reporte Financiero{% endblock %}
+{% block content %}
+<div class="main-content-container overflow-hidden">
+  <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-4">
+    <h3 class="mb-0">Reporte Financiero</h3>
+    <form method="get" class="d-flex gap-2">
+      <input type="date" name="start" value="{{ start|date:'Y-m-d' }}" class="form-control form-control-sm">
+      <input type="date" name="end" value="{{ end|date:'Y-m-d' }}" class="form-control form-control-sm">
+      <button class="btn btn-primary btn-sm"><i class="ri-filter-line"></i> Filtrar</button>
+    </form>
+  </div>
+
+  <div class="row g-3 mb-4">
+    <div class="col-md-4"><div class="card p-3 shadow-sm"><h6>Ingresos</h6><h4 class="text-success fw-semibold">RD$ {{ total_ingresos }}</h4></div></div>
+    <div class="col-md-4"><div class="card p-3 shadow-sm"><h6>Egresos</h6><h4 class="text-danger fw-semibold">RD$ {{ total_egresos }}</h4></div></div>
+    <div class="col-md-4"><div class="card p-3 shadow-sm"><h6>Balance</h6><h4 class="text-info fw-semibold">RD$ {{ balance }}</h4></div></div>
+  </div>
+
+  <div class="card border-0 shadow-sm">
+    <div class="card-body p-0">
+      <table class="table table-hover mb-0">
+        <thead><tr><th>Fecha</th><th>Tipo</th><th>Monto</th><th>Descripción</th><th>Usuario</th></tr></thead>
+        <tbody>
+          {% for m in movements %}
+          <tr>
+            <td>{{ m.created_at|date:"d/m/Y H:i" }}</td>
+            <td>
+              {% if m.movement_type == "ingreso" %}
+                <span class="badge bg-success">Ingreso</span>
+              {% else %}
+                <span class="badge bg-danger">Egreso</span>
+              {% endif %}
+            </td>
+            <td>RD$ {{ m.amount }}</td>
+            <td>{{ m.description }}</td>
+            <td>{{ m.created_by }}</td>
+          </tr>
+          {% empty %}
+          <tr><td colspan="5" class="text-center text-muted py-3">No hay movimientos.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}

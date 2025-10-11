@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Cajas Registradas{% endblock %}
+
+{% block content %}
+<div class="main-content-container overflow-hidden">
+
+  <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-4">
+    <h3 class="mb-0">Cajas Registradas</h3>
+    <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
+      <ol class="breadcrumb align-items-center mb-0 lh-1">
+        <li class="breadcrumb-item">
+          <a href="{% url 'dashboard:home' %}" class="d-flex align-items-center text-decoration-none">
+            <i class="ri-home-4-line fs-18 text-primary me-1"></i>
+            <span class="text-secondary fw-medium hover">Dashboard</span>
+          </a>
+        </li>
+        <li class="breadcrumb-item active" aria-current="page">
+          <span class="fw-medium">Cajas</span>
+        </li>
+      </ol>
+    </nav>
+  </div>
+
+  <div class="card bg-white border-0 rounded-3 mb-4">
+    <div class="card-body p-4">
+
+      {% if active_register %}
+        <div class="alert alert-success d-flex justify-content-between align-items-center mb-4">
+          <div>
+            <strong>Caja abierta:</strong> {{ active_register.name }} — RD$ {{ active_register.opening_balance }}
+          </div>
+          <form method="post" action="{% url 'cash:close' active_register.id %}">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-sm btn-danger">
+              <i class="ri-lock-line"></i> Cerrar caja
+            </button>
+          </form>
+        </div>
+      {% else %}
+        <form method="post" action="{% url 'cash:open' %}" class="d-flex gap-2 mb-4">
+          {% csrf_token %}
+          <input type="text" name="name" placeholder="Nombre del turno" class="form-control w-auto">
+          <input type="number" step="0.01" name="opening_balance" placeholder="Saldo inicial (RD$)" class="form-control w-auto">
+          <button type="submit" class="btn btn-success">
+            <i class="ri-checkbox-circle-line"></i> Abrir Caja
+          </button>
+        </form>
+      {% endif %}
+
+      <div class="table-responsive">
+        <table class="table align-middle">
+          <thead>
+            <tr>
+              <th>Nombre</th>
+              <th>Abierta por</th>
+              <th>Saldo inicial</th>
+              <th>Estado</th>
+              <th>Balance final</th>
+              <th>Fecha de apertura</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for r in registers %}
+              <tr>
+                <td>{{ r.name }}</td>
+                <td>{{ r.opened_by }}</td>
+                <td>RD$ {{ r.opening_balance }}</td>
+                <td>
+                  {% if r.is_open %}
+                    <span class="badge bg-success">Abierta</span>
+                  {% else %}
+                    <span class="badge bg-secondary">Cerrada</span>
+                  {% endif %}
+                </td>
+                <td>RD$ {{ r.closing_balance }}</td>
+                <td>{{ r.opened_at|date:"d/m/Y H:i" }}</td>
+                <td>
+                  <a href="{% url 'cash:detail' r.id %}" class="btn btn-sm btn-outline-primary">
+                    <i class="ri-eye-line"></i>
+                  </a>
+                </td>
+              </tr>
+            {% empty %}
+              <tr>
+                <td colspan="7" class="text-center text-muted py-4">No hay registros de caja.</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+  </div>
+</div>
+{% endblock %}

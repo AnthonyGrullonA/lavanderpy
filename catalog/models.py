@@ -27,7 +27,11 @@ class Service(models.Model):
 
     name = models.CharField(max_length=100, unique=True)
     category = models.ForeignKey(
-        ServiceCategory, on_delete=models.SET_NULL, null=True, blank=True
+        ServiceCategory,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="services"  # ✅ agregado sin romper compatibilidad
     )
     description = models.TextField(blank=True, null=True)
     unit_type = models.CharField(max_length=20, choices=UNIT_CHOICES, default="prenda")
