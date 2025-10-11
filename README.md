@@ -153,8 +153,5 @@ para cambiar logos, colores, textos y favicon desde la interfaz sin reiniciar el
 ## 🧑‍💻 Autor
 
 **Jairol Anthony Grullón Amparo**  
-Especialista en Automatización y DevOps | Django Developer  
-📧 correo@ejemplo.com  
-🌐 [LinkedIn](https://linkedin.com) | [GitHub](https://github.com)
 
 ---
