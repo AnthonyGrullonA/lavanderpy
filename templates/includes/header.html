@@ -3,8 +3,7 @@
     <div class="row align-items-center">
         <div class="col-lg-4 col-sm-6">
             <div class="left-header-content">
-                <ul
-                    class="d-flex align-items-center ps-0 mb-0 list-unstyled justify-content-center justify-content-sm-start">
+                <ul class="d-flex align-items-center ps-0 mb-0 list-unstyled justify-content-center justify-content-sm-start">
                     <li>
                         <button class="header-burger-menu bg-transparent p-0 border-0" id="header-burger-menu">
                             <span class="material-symbols-outlined">menu</span>
@@ -16,8 +15,7 @@
 
         <div class="col-lg-8 col-sm-6">
             <div class="right-header-content mt-2 mt-sm-0">
-                <ul
-                    class="d-flex align-items-center justify-content-center justify-content-sm-end ps-0 mb-0 list-unstyled">
+                <ul class="d-flex align-items-center justify-content-center justify-content-sm-end ps-0 mb-0 list-unstyled">
                     <li class="header-right-item">
                         <div class="dropdown admin-profile">
                             <div class="d-xxl-flex align-items-center bg-transparent border-0 text-start p-0 cursor dropdown-toggle"
@@ -26,7 +24,6 @@
                                     style="width: 40px; height: 40px;">
                                     <i class="material-symbols-outlined text-secondary">person</i>
                                 </div>
-
                             </div>
 
                             <div class="dropdown-menu border-0 bg-white dropdown-menu-end shadow-sm p-3"
@@ -39,17 +36,15 @@
                                     </div>
                                     <div class="flex-grow-1 ms-2">
                                         <h3 class="fw-medium mb-0 fs-14">
-                                            {{ request.user.get_full_name }}
+                                            {{ request.user.get_full_name|default:request.user.username }}
                                         </h3>
                                     </div>
-
-
                                 </div>
 
                                 <ul class="admin-link ps-0 mb-0 list-unstyled">
                                     <li class="mb-2">
                                         <a class="admin-item-link d-flex align-items-center text-body text-decoration-none"
-                                            href="">
+                                           href="{% url 'admin:auth_user_change' request.user.id %}">
                                             <i class="material-symbols-outlined">account_circle</i>
                                             <span class="ms-2">Mi Perfil</span>
                                         </a>
@@ -57,7 +52,7 @@
 
                                     <li class="mb-2">
                                         <a class="admin-item-link d-flex align-items-center text-body text-decoration-none"
-                                            href="{% url 'admin:index' %}">
+                                           href="{% url 'admin:index' %}">
                                             <i class="material-symbols-outlined">settings</i>
                                             <span class="ms-2">Configuración</span>
                                         </a>
@@ -65,13 +60,12 @@
 
                                     <li>
                                         <a class="admin-item-link d-flex align-items-center text-body text-decoration-none"
-                                            href="{% url 'accounts:logout' %}">
+                                           href="{% url 'accounts:logout' %}">
                                             <i class="material-symbols-outlined">logout</i>
                                             <span class="ms-2">Cerrar Sesión</span>
                                         </a>
                                     </li>
                                 </ul>
-
                             </div>
                         </div>
                     </li>

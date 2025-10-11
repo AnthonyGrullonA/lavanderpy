@@ -1,11 +1,11 @@
 <div class="preloader" id="preloader">
     <div class="preloader">
         <div class="waviy position-relative">
-            <span class="d-inline-block">T</span>
-            <span class="d-inline-block">R</span>
-            <span class="d-inline-block">E</span>
-            <span class="d-inline-block">Z</span>
-            <span class="d-inline-block">O</span>
+            {% with text=active_theme.preloader_text|default:"TREZO" %}
+                {% for letter in text %}
+                    <span class="d-inline-block">{{ letter }}</span>
+                {% endfor %}
+            {% endwith %}
         </div>
     </div>
 </div>
