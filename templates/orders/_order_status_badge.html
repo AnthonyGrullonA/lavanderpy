@@ -1,0 +1,13 @@
+{% if order.status == "pendiente" %}
+  <span class="badge bg-warning text-dark">Pendiente</span>
+{% elif order.status == "en_proceso" %}
+  <span class="badge bg-info text-dark">En proceso</span>
+{% elif order.status == "listo" %}
+  <span class="badge bg-success text-white">Listo</span>
+{% elif order.status == "entregado" %}
+  <span class="badge bg-primary text-white">Entregado</span>
+{% elif order.status == "cancelado" %}
+  <span class="badge bg-danger text-white">Cancelado</span>
+{% else %}
+  <span class="badge bg-secondary">Desconocido</span>
+{% endif %}

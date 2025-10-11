@@ -1,0 +1,252 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+  {% if is_edit %}Editar Orden{% else %}Nueva Orden{% endif %}
+{% endblock %}
+
+{% block content %}
+<div class="main-content-container overflow-hidden">
+  <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-4">
+    <h3 class="mb-0">
+      {% if is_edit %}Editar Orden {{ form.instance.code }}{% else %}Nueva Orden{% endif %}
+    </h3>
+
+    <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
+      <ol class="breadcrumb align-items-center mb-0 lh-1">
+        <li class="breadcrumb-item">
+          <a href="{% url 'dashboard:home' %}" class="d-flex align-items-center text-decoration-none">
+            <i class="ri-home-4-line fs-18 text-primary me-1"></i>
+            <span class="text-secondary fw-medium hover">Dashboard</span>
+          </a>
+        </li>
+        <li class="breadcrumb-item active" aria-current="page"><span class="fw-medium">Órdenes</span></li>
+        <li class="breadcrumb-item active" aria-current="page"><span class="fw-medium">{% if is_edit %}Editar{% else %}Nueva{% endif %} Orden</span></li>
+      </ol>
+    </nav>
+  </div>
+
+  <div class="card bg-white border-0 rounded-3 mb-4">
+    <div class="card-body p-4">
+      <h4 class="mb-4">{% if is_edit %}Actualizar{% else %}Registrar{% endif %} Orden</h4>
+
+      <form method="POST" id="orderForm"
+            action="{% if is_edit %}{% url 'orders:edit' form.instance.pk %}{% else %}{% url 'orders:add' %}{% endif %}">
+        {% csrf_token %}
+
+        {% if form.errors %}
+          <div class="alert alert-danger">Por favor corrige los errores antes de continuar.</div>
+        {% endif %}
+
+        <!-- Cliente -->
+        <div class="row">
+          <div class="col-lg-6 mb-3">
+            <label class="form-label text-secondary">Cliente</label>
+            <select name="customer" class="form-select h-55" required {% if is_edit %}disabled{% endif %}>
+              <option value="">Seleccione un cliente...</option>
+              {% for c in customers %}
+                <option value="{{ c.id }}" {% if form.instance.customer.id == c.id %}selected{% endif %}>{{ c.name }}</option>
+              {% endfor %}
+            </select>
+          </div>
+
+          <div class="col-lg-6 mb-3">
+            <label class="form-label text-secondary">Notas</label>
+            <textarea name="notes" class="form-control" rows="2">{{ form.instance.notes }}</textarea>
+          </div>
+        </div>
+
+        <input type="hidden" name="status" value="{{ form.instance.status|default:'pendiente' }}">
+
+        <hr class="my-4">
+
+        <h5 class="mb-3">Servicios incluidos</h5>
+
+        <div id="order-lines">
+          {% if is_edit %}
+            {% for line in line_forms %}
+              <div class="row align-items-end mb-3" data-line>
+                <div class="col-md-5">
+                  <label class="form-label">Servicio</label>
+                  <select name="service_id" class="form-select service-select" required>
+                    <option value="">Seleccionar...</option>
+                    {% for s in services %}
+                      <option value="{{ s.id }}" data-price="{{ s.base_price }}"
+                        {% if s.id|stringformat:"s" == line.service_id|stringformat:"s" %}selected{% endif %}>
+                        {{ s.name }} — RD$ {{ s.base_price }}
+                      </option>
+                    {% endfor %}
+                  </select>
+                </div>
+
+                <div class="col-md-3">
+                  <label class="form-label">Cantidad</label>
+                  <input type="number" name="quantity" value="{{ line.quantity|default:'1' }}" class="form-control quantity-input" min="1" step="0.1" required>
+                </div>
+
+                <div class="col-md-3">
+                  <label class="form-label">Precio (RD$)</label>
+                  <input type="number" name="price" value="{{ line.unit_price|default:'0.00' }}" class="form-control price-input text-muted" step="0.01" readonly>
+                </div>
+
+                <div class="col-md-1 text-end">
+                  <button type="button" class="btn btn-link text-danger mt-2 remove-line" title="Eliminar línea">
+                    <i class="ri-delete-bin-line"></i>
+                  </button>
+                </div>
+              </div>
+            {% endfor %}
+          {% else %}
+            <!-- Nueva orden: línea vacía por defecto -->
+            <div class="row align-items-end mb-3" data-line>
+              <div class="col-md-5">
+                <label class="form-label">Servicio</label>
+                <select name="service_id" class="form-select service-select" required>
+                  <option value="">Seleccionar...</option>
+                  {% for s in services %}
+                    <option value="{{ s.id }}" data-price="{{ s.base_price }}">{{ s.name }} — RD$ {{ s.base_price }}</option>
+                  {% endfor %}
+                </select>
+              </div>
+              <div class="col-md-3">
+                <label class="form-label">Cantidad</label>
+                <input type="number" name="quantity" value="1" class="form-control quantity-input" min="1" step="0.1" required>
+              </div>
+              <div class="col-md-3">
+                <label class="form-label">Precio (RD$)</label>
+                <input type="number" name="price" value="0.00" class="form-control price-input text-muted" step="0.01" readonly>
+              </div>
+              <div class="col-md-1 text-end">
+                <button type="button" class="btn btn-link text-danger mt-2 remove-line" title="Eliminar línea">
+                  <i class="ri-delete-bin-line"></i>
+                </button>
+              </div>
+            </div>
+          {% endif %}
+        </div>
+
+        <button type="button" class="btn btn-outline-primary btn-sm mb-3" id="add-line-btn">
+          <i class="ri-add-line"></i> Agregar servicio
+        </button>
+
+        <hr>
+
+        <!-- Totales -->
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <label class="form-label text-secondary">Descuento</label>
+            <input type="number" name="discount" id="discount" class="form-control" step="0.01" min="0" value="{{ form.instance.discount|default:'0.00' }}">
+          </div>
+          <div class="col-md-6 d-flex align-items-center justify-content-between">
+            <h5 class="mb-0">Total estimado:</h5>
+            <h4 class="text-primary fw-semibold mb-0" id="order-total">
+              RD$ {% if is_edit %}{{ form.instance.final_amount|default:'0.00' }}{% else %}0.00{% endif %}
+            </h4>
+          </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary w-100 mt-3 py-2 fw-medium">
+          <i class="ri-check-line me-1"></i> {% if is_edit %}Actualizar{% else %}Guardar{% endif %} Orden
+        </button>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+  const linesContainer = document.getElementById("order-lines");
+  const addLineBtn = document.getElementById("add-line-btn");
+  const totalField = document.getElementById("order-total");
+  const discountInput = document.getElementById("discount");
+
+  // ===========================
+  // 🔹 Recalcular total dinámico
+  // ===========================
+  function recalculateTotal() {
+    let total = 0;
+    linesContainer.querySelectorAll("[data-line]").forEach(line => {
+      const qty = parseFloat(line.querySelector(".quantity-input")?.value || 0);
+      const price = parseFloat(line.querySelector(".price-input")?.value || 0);
+      total += qty * price;
+    });
+    const discount = parseFloat(discountInput?.value || 0);
+    total -= discount;
+    totalField.textContent = "RD$ " + total.toFixed(2);
+  }
+
+  // ===========================
+  // 🔹 Autocompletar precio
+  // ===========================
+  document.addEventListener("change", function(e) {
+    if (e.target.matches(".service-select")) {
+      const selected = e.target.options[e.target.selectedIndex];
+      const priceInput = e.target.closest("[data-line]").querySelector(".price-input");
+      if (selected && selected.dataset.price) {
+        priceInput.value = parseFloat(selected.dataset.price).toFixed(2);
+        recalculateTotal();
+      }
+    }
+  });
+
+  // ===========================
+  // 🔹 Recalcular al editar
+  // ===========================
+  document.addEventListener("input", function(e) {
+    if (e.target.matches(".quantity-input, #discount")) {
+      recalculateTotal();
+    }
+  });
+
+  // ===========================
+  // 🔹 Agregar línea nueva
+  // ===========================
+  addLineBtn.addEventListener("click", function() {
+    const template = `
+      <div class="row align-items-end mb-3" data-line>
+        <div class="col-md-5">
+          <label class="form-label">Servicio</label>
+          <select name="service_id" class="form-select service-select" required>
+            <option value="">Seleccionar...</option>
+            {% for s in services %}
+              <option value="{{ s.id }}" data-price="{{ s.base_price }}">{{ s.name }} — RD$ {{ s.base_price }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="col-md-3">
+          <label class="form-label">Cantidad</label>
+          <input type="number" name="quantity" value="1" class="form-control quantity-input" min="1" step="0.1" required>
+        </div>
+        <div class="col-md-3">
+          <label class="form-label">Precio (RD$)</label>
+          <input type="number" name="price" value="0.00" class="form-control price-input text-muted" step="0.01" readonly>
+        </div>
+        <div class="col-md-1 text-end">
+          <button type="button" class="btn btn-link text-danger mt-2 remove-line" title="Eliminar línea">
+            <i class="ri-delete-bin-line"></i>
+          </button>
+        </div>
+      </div>`;
+    linesContainer.insertAdjacentHTML("beforeend", template);
+  });
+
+  // ===========================
+  // 🔹 Eliminar línea
+  // ===========================
+  document.addEventListener("click", function(e) {
+    const btn = e.target.closest(".remove-line");
+    if (!btn) return;
+    const rows = linesContainer.querySelectorAll("[data-line]");
+    if (rows.length > 1) {
+      btn.closest("[data-line]").remove();
+      recalculateTotal();
+    }
+  });
+
+  // 🔹 Inicial: calcula total al cargar
+  recalculateTotal();
+});
+</script>
+{% endblock %}

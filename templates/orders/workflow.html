@@ -1,0 +1,100 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Flujo de Órdenes{% endblock %}
+
+{% block content %}
+<div class="main-content-container overflow-hidden">
+
+  <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-4">
+    <h3 class="mb-0">Flujo de Órdenes</h3>
+    <a href="{% url 'orders:add' %}" class="btn btn-primary">
+      <i class="ri-add-line me-1"></i> Nueva Orden
+    </a>
+  </div>
+
+  <div class="row g-4">
+
+    <!-- 🟡 Pendientes -->
+    <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6">
+      <div class="card bg-light border-0 shadow-sm">
+        <div class="card-header bg-warning bg-opacity-10 border-0">
+          <h6 class="fw-semibold text-warning mb-0 text-center">Pendientes</h6>
+        </div>
+        <div class="card-body p-2">
+          {% for order in pending_orders %}
+            {% include "orders/_workflow_order_card.html" %}
+          {% empty %}
+            <p class="text-muted small text-center mb-0">Sin órdenes</p>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+
+    <!-- 🔵 En proceso -->
+    <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6">
+      <div class="card bg-light border-0 shadow-sm">
+        <div class="card-header bg-info bg-opacity-10 border-0">
+          <h6 class="fw-semibold text-info mb-0 text-center">En Proceso</h6>
+        </div>
+        <div class="card-body p-2">
+          {% for order in in_process_orders %}
+            {% include "orders/_workflow_order_card.html" %}
+          {% empty %}
+            <p class="text-muted small text-center mb-0">Sin órdenes</p>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+
+    <!-- ✅ Listas -->
+    <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6">
+      <div class="card bg-light border-0 shadow-sm">
+        <div class="card-header bg-success bg-opacity-10 border-0">
+          <h6 class="fw-semibold text-success mb-0 text-center">Listas</h6>
+        </div>
+        <div class="card-body p-2">
+          {% for order in ready_orders %}
+            {% include "orders/_workflow_order_card.html" %}
+          {% empty %}
+            <p class="text-muted small text-center mb-0">Sin órdenes</p>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+
+    <!-- ⚪ Entregadas -->
+    <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6">
+      <div class="card bg-light border-0 shadow-sm">
+        <div class="card-header bg-secondary bg-opacity-10 border-0">
+          <h6 class="fw-semibold text-secondary mb-0 text-center">Entregadas</h6>
+        </div>
+        <div class="card-body p-2">
+          {% for order in delivered_orders %}
+            {% include "orders/_workflow_order_card.html" %}
+          {% empty %}
+            <p class="text-muted small text-center mb-0">Sin órdenes</p>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+
+    <!-- 🔴 Canceladas -->
+    <div class="col-xl-2 col-lg-3 col-md-4 col-sm-6">
+      <div class="card bg-light border-0 shadow-sm">
+        <div class="card-header bg-danger bg-opacity-10 border-0">
+          <h6 class="fw-semibold text-danger mb-0 text-center">Canceladas</h6>
+        </div>
+        <div class="card-body p-2">
+          {% for order in cancelled_orders %}
+            {% include "orders/_workflow_order_card.html" %}
+          {% empty %}
+            <p class="text-muted small text-center mb-0">Sin órdenes</p>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+{% endblock %}

@@ -15,6 +15,7 @@ ALLOWED_HOSTS = ["localhost", "127.0.0.1"]
 # Apps
 # ---------------------------------------------------------------------
 DJANGO_APPS = [
+    "jazzmin",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -24,7 +25,7 @@ DJANGO_APPS = [
 ]
 
 THIRD_PARTY_APPS = [
-    "widget_tweaks"
+    "widget_tweaks",
 ]
 
 LOCAL_APPS = [
@@ -130,3 +131,22 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 LOGIN_URL = "accounts:login"
 LOGIN_REDIRECT_URL = "dashboard:home"
 LOGOUT_REDIRECT_URL = "accounts:login"
+
+
+# ---------------------------------------------------------------------
+# Gestion logs
+# ---------------------------------------------------------------------
+
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "handlers": {
+        "console": {
+            "class": "logging.StreamHandler",
+        },
+    },
+    "root": {
+        "handlers": ["console"],
+        "level": "DEBUG",
+    },
+}

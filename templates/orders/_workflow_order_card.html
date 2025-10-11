@@ -1,0 +1,33 @@
+<div class="card mb-2 border-0 shadow-sm">
+  <div class="card-body p-2">
+    <h6 class="fw-semibold text-dark mb-1">{{ order.code }}</h6>
+    <p class="text-muted mb-0 small">{{ order.customer.name }}</p>
+    <p class="text-muted small mb-0">RD$ {{ order.final_amount }}</p>
+
+    <div class="mt-2 d-flex gap-2 justify-content-center">
+      {% if order.status != "entregado" and order.status != "cancelado" %}
+        <!-- Avanzar estado -->
+        <form method="POST" action="{% url 'orders:advance' order.id %}">
+          {% csrf_token %}
+          <button type="submit" class="btn btn-sm btn-outline-primary" title="Avanzar estado">
+            <i class="ri-arrow-right-line"></i>
+          </button>
+        </form>
+
+        <!-- Cancelar orden -->
+        <form method="POST" action="{% url 'orders:cancel' order.id %}" 
+              onsubmit="return confirm('¿Seguro que deseas cancelar esta orden?');">
+          {% csrf_token %}
+          <button type="submit" class="btn btn-sm btn-outline-danger" title="Cancelar orden">
+            <i class="ri-close-line"></i>
+          </button>
+        </form>
+      {% endif %}
+
+      <!-- Ver detalle -->
+      <a href="{% url 'orders:detail' order.id %}" class="btn btn-sm btn-outline-secondary" title="Ver detalle">
+        <i class="ri-eye-line"></i>
+      </a>
+    </div>
+  </div>
+</div>

@@ -1,19 +1,22 @@
 <tr>
   <td>#{{ item.id }}</td>
   <td>{{ item.name }}</td>
-  <td>{{ item.unit.abbreviation }}</td>
-  <td class="{% if item.is_below_min %}text-danger{% endif %}">
-    {{ item.current_stock }}
-  </td>
+  <td>{{ item.unit }}</td>
+  <td>{{ item.current_stock }}</td>
   <td>{{ item.min_stock }}</td>
   <td>
-    {% if item.is_active %}
-      <span class="badge bg-primary bg-opacity-10 text-primary p-2 fs-12 fw-normal">Activo</span>
-      {% if item.is_below_min %}
-        <span class="badge bg-danger bg-opacity-10 text-danger p-2 fs-12 fw-normal ms-1">Bajo stock</span>
-      {% endif %}
+    {% if item.stock_status == "Crítico" %}
+      <span class="badge bg-danger bg-opacity-10 text-danger p-2 fs-12 fw-normal">
+        <i class="ri-alert-fill me-1"></i> Crítico
+      </span>
+    {% elif item.stock_status == "Bajo" %}
+      <span class="badge bg-warning bg-opacity-10 text-warning p-2 fs-12 fw-normal">
+        <i class="ri-error-warning-line me-1"></i> Bajo
+      </span>
     {% else %}
-      <span class="badge bg-danger bg-opacity-10 text-danger p-2 fs-12 fw-normal">Inactivo</span>
+      <span class="badge bg-success bg-opacity-10 text-success p-2 fs-12 fw-normal">
+        <i class="ri-checkbox-circle-line me-1"></i> Normal
+      </span>
     {% endif %}
   </td>
   <td>
@@ -22,8 +25,7 @@
               class="ps-0 border-0 bg-transparent lh-1 position-relative top-2">
         <i class="material-symbols-outlined fs-16 text-body">edit</i>
       </button>
-
-      <form method="POST" action="{% url 'inventory:deactivate' item.id %}" style="display:inline;">
+      <form method="POST" action="{% url 'inventory:deactivate' item.id %}">
         {% csrf_token %}
         <button type="submit" class="ps-0 border-0 bg-transparent lh-1 text-danger"
                 onclick="return confirm('¿Desactivar este insumo?')">

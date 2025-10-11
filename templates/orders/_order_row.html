@@ -1,0 +1,18 @@
+<tr>
+  <td>#{{ order.code }}</td>
+  <td>{{ order.customer.name }}</td>
+  <td>{{ order.service_summary }}</td>
+  <td>RD$ {{ order.final_amount }}</td>
+  <td>{% include "orders/_order_status_badge.html" %}</td>
+  <td>{{ order.date_created|date:"d/m/Y H:i" }}</td>
+  <td>
+    <div class="d-flex align-items-center gap-1">
+      <a href="{% url 'orders:detail' order.id %}" class="text-primary border-0 bg-transparent">
+        <i class="material-symbols-outlined fs-16">visibility</i>
+      </a>
+      <a href="{% url 'orders:edit' order.id %}" class="text-body border-0 bg-transparent">
+        <i class="material-symbols-outlined fs-16">edit</i>
+      </a>
+    </div>
+  </td>
+</tr>

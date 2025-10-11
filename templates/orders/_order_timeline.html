@@ -1,0 +1,59 @@
+<div class="card bg-white border-0 rounded-3 mb-4">
+  <div class="card-body p-4">
+    <h5 class="fw-semibold mb-3">Historial de la orden</h5>
+    <ul class="timeline list-unstyled mb-0">
+      {% for track in tracking %}
+        <li class="mb-3">
+          <div class="fw-medium">{{ track.new_status|capfirst }}</div>
+          <small class="text-muted">
+            {{ track.timestamp|date:"d/m/Y H:i" }} — 
+            {% if track.changed_by %}{{ track.changed_by.username }}{% else %}Automático{% endif %}
+          </small>
+          {% if track.notes %}
+            <div class="text-muted small">{{ track.notes }}</div>
+          {% endif %}
+        </li>
+      {% empty %}
+        <li class="text-muted">Sin movimientos registrados.</li>
+      {% endfor %}
+    </ul>
+  </div>
+</div>
+{% if tracking %}
+<div class="timeline p-4 border rounded-3 bg-light mb-4">
+  <h6 class="fw-semibold mb-3 text-primary">
+    <i class="ri-time-line align-middle me-1"></i> Historial de seguimiento
+  </h6>
+
+  <ul class="list-unstyled timeline-list mb-0">
+    {% for t in tracking %}
+    <li class="d-flex mb-3">
+      <div class="me-3">
+        {% if t.new_status == 'pendiente' %}
+          <span class="badge bg-secondary">Pendiente</span>
+        {% elif t.new_status == 'en_proceso' %}
+          <span class="badge bg-warning text-dark">En proceso</span>
+        {% elif t.new_status == 'listo' %}
+          <span class="badge bg-info text-dark">Listo</span>
+        {% elif t.new_status == 'entregado' %}
+          <span class="badge bg-success">Entregado</span>
+        {% elif t.new_status == 'cancelado' %}
+          <span class="badge bg-danger">Cancelado</span>
+        {% endif %}
+      </div>
+      <div>
+        <small class="text-muted d-block">{{ t.timestamp|date:"d M Y H:i" }}</small>
+        {% if t.changed_by %}
+          <small class="text-secondary">Por {{ t.changed_by.get_full_name|default:t.changed_by.username }}</small>
+        {% endif %}
+        {% if t.notes %}
+          <div class="text-body small">{{ t.notes }}</div>
+        {% endif %}
+      </div>
+    </li>
+    {% endfor %}
+  </ul>
+</div>
+{% else %}
+<p class="text-muted small">Sin historial aún.</p>
+{% endif %}

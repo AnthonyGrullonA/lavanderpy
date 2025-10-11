@@ -1,14 +1,13 @@
 {% extends "base.html" %}
 {% load static %}
-{% block title %}Insumos{% endblock %}
+{% block title %}Inventario{% endblock %}
 
 {% block content %}
 <div class="main-content-container overflow-hidden">
 
   <!-- Encabezado -->
   <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-4">
-    <h3 class="mb-0">Insumos</h3>
-
+    <h3 class="mb-0">Inventario</h3>
     <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
       <ol class="breadcrumb align-items-center mb-0 lh-1">
         <li class="breadcrumb-item">
@@ -17,112 +16,82 @@
             <span class="text-secondary fw-medium hover">Dashboard</span>
           </a>
         </li>
-        <li class="breadcrumb-item active" aria-current="page">
-          <span class="fw-medium">Inventario</span>
-        </li>
+        <li class="breadcrumb-item active" aria-current="page"><span class="fw-medium">Inventario</span></li>
       </ol>
     </nav>
   </div>
 
-  <!-- Card tabla -->
+  <!-- Tabla -->
   <div class="card bg-white border-0 rounded-3 mb-4">
     <div class="card-body p-0">
-
-      <!-- Barra superior: búsqueda + agregar -->
       <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 p-4">
         <form method="get" class="position-relative table-src-form me-0">
           <input type="text" class="form-control" name="q" value="{{ query|default:'' }}" placeholder="Buscar insumo...">
           <i class="material-symbols-outlined position-absolute top-50 start-0 translate-middle-y">search</i>
         </form>
-
         <button class="btn btn-outline-primary py-1 px-2 px-sm-4 fs-14 fw-medium rounded-3 hover-bg"
                 type="button" onclick="openCreateItem()">
-          <span class="py-sm-1 d-block">
-            <i class="ri-add-line d-none d-sm-inline-block"></i>
-            <span>Agregar Insumo</span>
-          </span>
+          <i class="ri-add-line d-none d-sm-inline-block"></i> Agregar Insumo
         </button>
       </div>
 
-      <!-- Tabla -->
       <div class="default-table-area style-two default-table-width">
         <div class="table-responsive">
           <table class="table align-middle">
             <thead>
               <tr>
-                <th>ID</th>
                 <th>Nombre</th>
                 <th>Unidad</th>
                 <th>Stock</th>
                 <th>Mínimo</th>
+                <th>Costo</th>
                 <th>Estado</th>
                 <th>Acciones</th>
               </tr>
             </thead>
-            <tbody id="inventory-table-body">
+            <tbody>
               {% for item in items %}
-                {% include "inventory/_item_row.html" %}
+              <tr>
+                <td>{{ item.name }}</td>
+                <td>{{ item.unit.abbreviation }}</td>
+                <td>{{ item.current_stock }}</td>
+                <td>{{ item.min_stock }}</td>
+                <td>{{ item.cost_per_unit }} RD$</td>
+                <td>
+                  {% if item.is_below_minimum %}
+                    <span class="badge bg-danger bg-opacity-10 text-danger p-2 fs-12">Bajo stock</span>
+                  {% else %}
+                    <span class="badge bg-success bg-opacity-10 text-success p-2 fs-12">Normal</span>
+                  {% endif %}
+                </td>
+                <td>
+                  <div class="d-flex align-items-center gap-1">
+                    <button type="button" onclick="openEditItem({{ item.id }})" class="border-0 bg-transparent lh-1">
+                      <i class="material-symbols-outlined fs-16 text-body">edit</i>
+                    </button>
+                    <form method="POST" action="{% url 'inventory:deactivate' item.id %}" class="d-inline">
+                      {% csrf_token %}
+                      <button type="submit" class="border-0 bg-transparent lh-1 text-danger"
+                              onclick="return confirm('¿Desactivar este insumo?')">
+                        <i class="material-symbols-outlined fs-16">block</i>
+                      </button>
+                    </form>
+                  </div>
+                </td>
+              </tr>
               {% empty %}
-                <tr>
-                  <td colspan="7" class="text-center py-4 text-muted">No hay insumos activos.</td>
-                </tr>
+              <tr><td colspan="7" class="text-center py-4 text-muted">No hay insumos activos.</td></tr>
               {% endfor %}
             </tbody>
           </table>
         </div>
-
-        <!-- Paginación -->
-        {% if is_paginated %}
-        <div class="p-4 pt-lg-4">
-          <div class="d-flex justify-content-center justify-content-sm-between align-items-center text-center flex-wrap gap-2 showing-wrap w-100">
-            <span class="fs-12 fw-medium">
-              Mostrando {{ page_obj.start_index }}–{{ page_obj.end_index }} de {{ page_obj.paginator.count }} resultados
-            </span>
-
-            <nav aria-label="Page navigation">
-              <ul class="pagination mb-0 justify-content-center">
-                {% if page_obj.has_previous %}
-                <li class="page-item">
-                  <a class="page-link icon" href="?page={{ page_obj.previous_page_number }}{% if query %}&q={{ query }}{% endif %}" aria-label="Anterior">
-                    <i class="material-symbols-outlined">keyboard_arrow_left</i>
-                  </a>
-                </li>
-                {% else %}
-                <li class="page-item disabled">
-                  <span class="page-link icon"><i class="material-symbols-outlined">keyboard_arrow_left</i></span>
-                </li>
-                {% endif %}
-
-                {% for p in paginator.page_range %}
-                  {% if p == page_obj.number %}
-                    <li class="page-item"><span class="page-link active">{{ p }}</span></li>
-                  {% else %}
-                    <li class="page-item"><a class="page-link" href="?page={{ p }}{% if query %}&q={{ query }}{% endif %}">{{ p }}</a></li>
-                  {% endif %}
-                {% endfor %}
-
-                {% if page_obj.has_next %}
-                <li class="page-item">
-                  <a class="page-link icon" href="?page={{ page_obj.next_page_number }}{% if query %}&q={{ query }}{% endif %}" aria-label="Siguiente">
-                    <i class="material-symbols-outlined">keyboard_arrow_right</i>
-                  </a>
-                </li>
-                {% else %}
-                <li class="page-item disabled">
-                  <span class="page-link icon"><i class="material-symbols-outlined">keyboard_arrow_right</i></span>
-                </li>
-                {% endif %}
-              </ul>
-            </nav>
-          </div>
-        </div>
-        {% endif %}
       </div>
+
     </div>
   </div>
 </div>
 
-<!-- Offcanvas (crear / editar) -->
+<!-- Offcanvas (crear/editar) -->
 <div class="offcanvas offcanvas-end bg-white" tabindex="-1" id="offcanvasItem"
      aria-labelledby="offcanvasItemLabel"
      style="box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;">
@@ -136,26 +105,16 @@
   </div>
 </div>
 
-{% if form and form.errors %}
+<!-- ✅ Script corregido -->
 <script>
-  document.addEventListener('DOMContentLoaded', function () {
-    const el = document.getElementById('offcanvasItem');
-    if (el && window.bootstrap) new bootstrap.Offcanvas(el).show();
-  });
-</script>
-{% endif %}
-
-<!-- ======== JS offcanvas crear/editar ======== -->
-<script>
-// Crea
 function openCreateItem() {
   document.getElementById("offcanvasItemLabel").innerText = "Agregar Insumo";
   const body = document.getElementById("offcanvasItemBody");
-  body.innerHTML = `{% include "inventory/form.html" %}`; // ✅ Eliminado force_escape
+  // ✅ se elimina el force_escape para que el HTML del formulario se renderice correctamente
+  body.innerHTML = `{% include "inventory/form.html" %}`;
   new bootstrap.Offcanvas('#offcanvasItem').show();
 }
 
-// Edita (vía AJAX que devuelve HTML del form)
 function openEditItem(id) {
   fetch(`/inventory/${id}/edit/`)
     .then(res => res.json())
@@ -167,5 +126,25 @@ function openEditItem(id) {
       }
     });
 }
+
+// Manejo de post-edición: redirige si el JSON devuelve redirect
+document.addEventListener("submit", async function (e) {
+  if (e.target.matches("form")) {
+    e.preventDefault();
+    const form = e.target;
+    const res = await fetch(form.action, {
+      method: form.method,
+      body: new FormData(form),
+      headers: { "X-Requested-With": "XMLHttpRequest" },
+    });
+    const data = await res.json();
+    if (data.success && data.redirect) {
+      window.location.href = data.redirect;
+    } else if (data.html) {
+      document.getElementById("offcanvasItemBody").innerHTML = data.html;
+    }
+  }
+});
 </script>
+
 {% endblock %}

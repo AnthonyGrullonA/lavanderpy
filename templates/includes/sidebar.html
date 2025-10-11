@@ -52,21 +52,61 @@
             <li class="menu-title small text-uppercase">
                 <span class="menu-title-text">Operaciones</span>
             </li>
-            <li class="menu-item">
-                <a href="{% url 'orders_list' as orders_url %}{{ orders_url|default:'#' }}" class="menu-link">
+
+            <li class="menu-item {% if request.resolver_match.app_name == 'orders' %}active{% endif %}">
+                <a href="{% url 'orders:list' %}" class="menu-link">
                     <span class="material-symbols-outlined menu-icon">assignment</span>
                     <span class="title">Órdenes</span>
                 </a>
             </li>
 
+            <li class="menu-item {% if request.resolver_match.url_name == 'orders_create' %}active{% endif %}">
+                <a href="{% url 'orders:add' %}" class="menu-link">
+                    <span class="material-symbols-outlined menu-icon">add_task</span>
+                    <span class="title">Nueva Orden</span>
+                </a>
+            </li>
+
+            <li class="menu-item {% if request.resolver_match.url_name == 'orders_pending' %}active{% endif %}">
+                <a href="{% url 'orders:pending' %}" class="menu-link">
+                    <span class="material-symbols-outlined menu-icon">hourglass_empty</span>
+                    <span class="title">Pendientes</span>
+                </a>
+            </li>
+
+            <li class="menu-item {% if request.resolver_match.url_name == 'orders_ready' %}active{% endif %}">
+                <a href="{% url 'orders:ready' %}" class="menu-link">
+                    <span class="material-symbols-outlined menu-icon">done_all</span>
+                    <span class="title">Listas para entrega</span>
+                </a>
+            </li>
+
+            <li class="menu-item {% if request.resolver_match.url_name == 'orders_workflow' %}active{% endif %}">
+                <a href="{% url 'orders:workflow' %}" class="menu-link">
+                    <span class="material-symbols-outlined menu-icon">device_hub</span>
+                    <span class="title">Flujo de Órdenes</span>
+                </a>
+            </li>
+
+
             <!-- Inventario -->
             <li class="menu-title small text-uppercase">
                 <span class="menu-title-text">Inventario</span>
             </li>
-            <li class="menu-item {% if request.resolver_match.app_name == 'inventory' %}active{% endif %}">
+
+            <!-- Insumos -->
+            <li class="menu-item {% if request.resolver_match.url_name == 'inventory_list' %}active{% endif %}">
                 <a href="{% url 'inventory:list' %}" class="menu-link">
                     <span class="material-symbols-outlined menu-icon">inventory_2</span>
                     <span class="title">Insumos</span>
+                </a>
+            </li>
+
+            <!-- Movimientos de inventario -->
+            <li class="menu-item {% if request.resolver_match.url_name == 'inventory_movements' %}active{% endif %}">
+                <a href="{% url 'inventory:movements' %}" class="menu-link">
+                    <span class="material-symbols-outlined menu-icon">sync_alt</span>
+                    <span class="title">Movimientos</span>
                 </a>
             </li>
 

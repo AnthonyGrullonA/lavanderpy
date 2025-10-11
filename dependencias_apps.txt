@@ -1,8 +1,0 @@
-accounts ───┐
-            │  (usuarios y permisos)
-            ▼
-customers ──┬── orders ──┬── billing ── cash
-             │            │
-             │            └── inventory
-             │
-             └── reports ───── dashboard

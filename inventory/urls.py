@@ -8,4 +8,6 @@ urlpatterns = [
     path("add/", views.InventoryCreateView.as_view(), name="add"),
     path("<int:pk>/edit/", views.InventoryEditPartialView.as_view(), name="edit"),
     path("<int:pk>/deactivate/", views.InventoryDeactivateView.as_view(), name="deactivate"),
+    path("movements/", views.InventoryMovementListView.as_view(), name="movements"),
+
 ]

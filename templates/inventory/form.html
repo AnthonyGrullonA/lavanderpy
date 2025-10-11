@@ -1,33 +1,40 @@
-<form method="POST" action="{% if form.instance.pk %}{% url 'inventory:edit' form.instance.pk %}{% else %}{% url 'inventory:add' %}{% endif %}">
+<form method="POST"
+      action="{% if form.instance.pk %}{% url 'inventory:edit' form.instance.pk %}{% else %}{% url 'inventory:add' %}{% endif %}">
   {% csrf_token %}
 
   {% if form.errors %}
-    <div class="alert alert-danger">Por favor corrige los errores antes de continuar.</div>
+  <div class="alert alert-danger">Por favor corrige los errores antes de continuar.</div>
   {% endif %}
 
   <div class="mb-3">
-    <label class="form-label">Nombre</label>
+    <label class="form-label">Nombre del insumo</label>
     {{ form.name }}
   </div>
 
   <div class="mb-3">
-    <label class="form-label">Unidad</label>
+    <label class="form-label">Unidad de medida</label>
     {{ form.unit }}
   </div>
 
   <div class="mb-3">
-    <label class="form-label">Stock actual</label>
-    {{ form.current_stock }}
+    <label class="form-label">Descripción</label>
+    {{ form.description }}
+  </div>
+
+  <div class="row">
+    <div class="col-md-6 mb-3">
+      <label class="form-label">Stock actual</label>
+      {{ form.current_stock }}
+    </div>
+    <div class="col-md-6 mb-3">
+      <label class="form-label">Stock mínimo</label>
+      {{ form.min_stock }}
+    </div>
   </div>
 
   <div class="mb-3">
-    <label class="form-label">Stock mínimo</label>
-    {{ form.min_stock }}
-  </div>
-
-  <div class="form-check form-switch mb-3">
-    {{ form.is_active }}
-    <label class="form-check-label ms-2">Activo</label>
+    <label class="form-label">Costo por unidad (RD$)</label>
+    {{ form.cost_per_unit }}
   </div>
 
   <button type="submit" class="btn btn-primary w-100">

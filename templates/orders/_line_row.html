@@ -1,0 +1,24 @@
+<div class="row align-items-end mb-3" data-line>
+  <div class="col-md-5">
+    <label class="form-label">Servicio</label>
+    <select name="service_id" class="form-select">
+      <option value="">Seleccionar...</option>
+      {% for service in services %}
+        <option value="{{ service.id }}">{{ service.name }}</option>
+      {% endfor %}
+    </select>
+  </div>
+  <div class="col-md-3">
+    <label class="form-label">Cantidad</label>
+    <input type="number" name="quantity" value="1" class="form-control" min="1" step="0.1">
+  </div>
+  <div class="col-md-3">
+    <label class="form-label">Precio (RD$)</label>
+    <input type="number" name="price" value="0.00" class="form-control" step="0.01">
+  </div>
+  <div class="col-md-1 text-end">
+    <button type="button" class="btn btn-link text-danger mt-2" onclick="this.closest('[data-line]').remove();">
+      <i class="ri-delete-bin-line"></i>
+    </button>
+  </div>
+</div>

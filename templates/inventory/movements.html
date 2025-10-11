@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% block title %}Movimientos de Inventario{% endblock %}
+{% block content %}
+<div class="main-content-container overflow-hidden">
+  <h3 class="mb-4">Movimientos de Inventario</h3>
+  <div class="card bg-white border-0 rounded-3">
+    <div class="card-body p-4">
+      <table class="table align-middle">
+        <thead>
+          <tr>
+            <th>Fecha</th>
+            <th>Insumo</th>
+            <th>Tipo</th>
+            <th>Cantidad</th>
+            <th>Stock después</th>
+            <th>Orden</th>
+            <th>Usuario</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for m in movements %}
+          <tr>
+            <td>{{ m.created_at|date:"d/m/Y H:i" }}</td>
+            <td>{{ m.item.name }}</td>
+            <td>
+              {% if m.movement_type == "salida" %}
+                <span class="badge bg-danger">Salida</span>
+              {% elif m.movement_type == "devolucion" %}
+                <span class="badge bg-success">Devolución</span>
+              {% elif m.movement_type == "entrada" %}
+                <span class="badge bg-primary">Entrada</span>
+              {% else %}
+                <span class="badge bg-secondary">Ajuste</span>
+              {% endif %}
+            </td>
+            <td>{{ m.quantity }}</td>
+            <td>{{ m.balance_after }}</td>
+            <td>{% if m.order %}<a href="{% url 'orders:detail' m.order.id %}">{{ m.order.code }}</a>{% else %}—{% endif %}</td>
+            <td>{{ m.user|default:"—" }}</td>
+          </tr>
+          {% empty %}
+          <tr><td colspan="7" class="text-center text-muted py-4">No hay movimientos registrados.</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}
